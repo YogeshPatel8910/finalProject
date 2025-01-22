@@ -1,5 +1,6 @@
 package com.example.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,13 +16,16 @@ public class Branch {
     private Long branchId;
 
     private String name;
+
     private String address;
+
     private String phone;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private List<Doctor> doctors;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private List<Appointment> appointments;
 }

@@ -1,5 +1,6 @@
 package com.example.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class Department {
 
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "department")
     private List<Doctor> doctors;
 

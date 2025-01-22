@@ -1,5 +1,6 @@
 package com.example.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
@@ -22,9 +23,11 @@ public class Patient extends User{
 
     private String gender;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient")
     private List<Appointment> appointment;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "patient")
     private List<MedicalReport> medicalReport;
 

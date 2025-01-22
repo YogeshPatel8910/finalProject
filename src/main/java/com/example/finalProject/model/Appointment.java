@@ -1,5 +1,6 @@
 package com.example.finalProject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,14 +17,17 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "patientId")
     private Patient patient;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "branchId")
     private Branch branch;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "doctorId")
     private Doctor doctor;
@@ -34,6 +38,7 @@ public class Appointment {
 
     private LocalTime timeSlot;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "appointment")
     @PrimaryKeyJoinColumn
     private MedicalReport medicalReport;
