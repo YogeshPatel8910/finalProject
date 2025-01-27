@@ -2,7 +2,9 @@ package com.example.finalProject.dto;
 
 import com.example.finalProject.model.ERole;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class UserDTO {
     private Long id;
 
