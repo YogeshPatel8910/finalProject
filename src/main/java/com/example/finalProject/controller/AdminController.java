@@ -2,9 +2,9 @@ package com.example.finalProject.controller;
 
 import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.DepartmentDTO;
-import com.example.finalProject.service.AdminService;
-import com.example.finalProject.service.BranchService;
-import com.example.finalProject.service.DepartmentService;
+import com.example.finalProject.dto.UserDTO;
+import com.example.finalProject.model.ERole;
+import com.example.finalProject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,30 @@ public class AdminController {
     @Autowired
     private BranchService branchService;
 
+    @Autowired
+    private PatientService patientService;
 
+    @Autowired
+    private DoctorService doctorService;
+
+    @GetMapping()
+    public ResponseEntity<List<UserDTO>> getAllUser(@PathVariable(name = "role")String role,
+                                                    @RequestParam(name = "page",defaultValue = "0")int page,
+                                                    @RequestParam(name = "size",defaultValue = "10")int size,
+                                                    @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                                    @RequestParam(name = "direction", defaultValue = "asc") String direction) {
+        Page<UserDTO> users = adminService.getAllUsers(page,size,sortBy,direction);
+        return new ResponseEntity<>(users.getContent(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteAdmin(@PathVariable(name = "id")long id){
+        boolean isDeleted = adminService.deleteById(id);
+        if(isDeleted)
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
     @GetMapping("/department")
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
                                                     @RequestParam(name = "size",required = false,defaultValue = "10")int size,
@@ -95,5 +118,24 @@ public class AdminController {
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+//    @DeleteMapping("/branch/{id}")
+//    public ResponseEntity<HttpStatus> deleteBranch(@PathVariable(name = "id")long id){
+//        boolean isDeleted = branchService.deleteBranch(id);
+//        if(isDeleted)
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        else
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
+//    @DeleteMapping("/branch/{id}")
+//    public ResponseEntity<HttpStatus> deleteBranch(@PathVariable(name = "id")long id){
+//        boolean isDeleted = branchService.deleteBranch(id);
+//        if(isDeleted)
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        else
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
+
+
+
 
 };

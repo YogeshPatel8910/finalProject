@@ -1,5 +1,6 @@
 package com.example.finalProject.controller;
 
+import com.example.finalProject.dto.LoginDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.service.AuthService;
 import com.example.finalProject.service.UserFactory;
@@ -41,8 +42,8 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody UserDTO userDTO) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDTO.getName(), userDTO.getPassword());
+    public ResponseEntity<Map<String,String>> login(@RequestBody LoginDTO loginDTO) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDTO.getName(), loginDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authToken);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String role = userDetails.getAuthorities().stream()

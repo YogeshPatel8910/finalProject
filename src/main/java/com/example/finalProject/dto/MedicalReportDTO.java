@@ -4,7 +4,6 @@ import com.example.finalProject.model.Appointment;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.model.Patient;
 import com.example.finalProject.model.Prescription;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;

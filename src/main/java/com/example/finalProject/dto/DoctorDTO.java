@@ -17,7 +17,7 @@ public class DoctorDTO extends UserDTO{
 
     private Department department;
 
-    private List<Date> availableDate;
+    private List<Date> availableDays;
 
     private List<Appointment> appointment;
 

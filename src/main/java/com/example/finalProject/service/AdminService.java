@@ -1,5 +1,6 @@
 package com.example.finalProject.service;
 
+import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
@@ -53,6 +54,30 @@ public  class AdminService implements UserService{
         return mapToDTO(userRepository.findByName(name));
     }
 
+    @Override
+    public UserDTO updateByName(String name, UserDTO userDTO) {
+        User user = userRepository.findByName(name);
+        if(user!=null){
+            user.setName(userDTO.getName());
+            user.setEmail(userDTO.getEmail());
+            user.setMobileNo(userDTO.getMobileNo());
+            return mapper.map(user, UserDTO.class);
+        }
+        else
+            return null;
+    }
+
+    @Override
+    public boolean deleteByName(String name) {
+        boolean isPresent = userRepository.existsByName(name);
+        if(isPresent){
+            userRepository.deleteByName(name);
+            return true;
+        }
+        else
+            return false;
+    }
+
     private UserDTO mapToDTO(User user) {
         UserDTO userDTO;
         if(user instanceof Patient){
@@ -65,5 +90,16 @@ public  class AdminService implements UserService{
         }
         userDTO.setRole(user.getRole().getName());
         return userDTO;
+    }
+
+
+    public boolean deleteById(long id) {
+        boolean isPresent = userRepository.existsById(id);
+        if(isPresent){
+            userRepository.deleteById(id);
+            return true;
+        }
+        else
+            return false;
     }
 }

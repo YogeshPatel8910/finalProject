@@ -4,6 +4,7 @@ import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.model.ERole;
+import com.example.finalProject.model.User;
 import com.example.finalProject.repository.DoctorRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
@@ -56,6 +57,29 @@ public class DoctorService implements UserService{
     @Override
     public UserDTO getByName(String name) {
         return mapToDTO(doctorRepository.findByName(name));
+    }
+
+    @Override
+    public UserDTO updateByName(String name, UserDTO userDTO) {
+        DoctorDTO doctorDTO = (DoctorDTO) userDTO;
+        Doctor doctor = doctorRepository.findByName(name);
+        if(doctor!=null){
+            doctor.setMobileNo(doctorDTO.getMobileNo());
+            return mapper.map(doctor, DoctorDTO.class);
+        }
+        else
+            return null;
+    }
+
+    @Override
+    public boolean deleteByName(String name) {
+        boolean isPresent = doctorRepository.existsByName(name);
+        if(isPresent){
+            doctorRepository.deleteByName(name);
+            return true;
+        }
+        else
+            return false;
     }
 
 

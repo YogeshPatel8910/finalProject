@@ -7,4 +7,6 @@ public interface DoctorRepository extends JpaRepository<Doctor,Long> {
     boolean existsByName(String name);
 
     Doctor findByName(String name);
+
+    void deleteByName(String name);
 }

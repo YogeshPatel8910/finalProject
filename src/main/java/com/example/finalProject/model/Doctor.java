@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,6 +27,8 @@ public class Doctor extends User {
     @ManyToOne
     @JoinColumn(name = "departmentId")
     private Department department;
+
+    private List<LocalDate> availableDays;
 
     @JsonIgnore
     @OneToMany(mappedBy = "doctor")

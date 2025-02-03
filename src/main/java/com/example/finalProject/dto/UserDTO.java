@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "role",
         visible = true
-
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = UserDTO.class,name = "ROLE_ADMIN"),
@@ -36,4 +35,6 @@ public class UserDTO {
     private String password;
 
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }
