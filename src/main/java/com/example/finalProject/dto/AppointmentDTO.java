@@ -1,6 +1,7 @@
 package com.example.finalProject.dto;
 
-import com.example.finalProject.model.*;
+import com.example.finalProject.model.EStatus;
+import com.example.finalProject.model.MedicalReport;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -11,11 +12,13 @@ public class AppointmentDTO {
 
     private Long id;
 
-    private Patient patient;
+    private String patientName;
 
-    private Branch branch;
+    private String branchName;
 
-    private Doctor doctor;
+    private String doctorName;
+
+    private String departmentName;
 
     private String reason;
 

@@ -1,9 +1,7 @@
 package com.example.finalProject.service;
 
-import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
-import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.ERole;
 import com.example.finalProject.model.Patient;
 import com.example.finalProject.repository.PatientRepository;
@@ -43,15 +41,9 @@ public class PatientService implements UserService{
         Patient patient = mapper.map(patientDTO,Patient.class);
         patient.setRole(roleRepository.findByName(ERole.ROLE_PATIENT));
         patient.setPassword(passwordEncoder.encode(patientDTO.getPassword()));
+        patient.setCreatedAt(LocalDateTime.now());
         Patient newUser = patientRepository.save(patient);
-        return mapToDTO(newUser);
-    }
-
-    private PatientDTO mapToDTO(Patient patient) {
-        PatientDTO patientDTO = mapper.map(patient,PatientDTO.class);
-        patient.setCreatedAt(patientDTO.getCreatedAt());
-        patientDTO.setRole(ERole.ROLE_PATIENT);
-        return patientDTO;
+        return mapper.map(newUser,PatientDTO.class);
     }
 
     @Override
@@ -59,13 +51,14 @@ public class PatientService implements UserService{
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
         Pageable pageable = PageRequest.of(page, size, sort);
-        return patientRepository.findAll(pageable).map(this::mapToDTO);
+        return patientRepository.findAll(pageable).map(patient -> mapper.map(patient,PatientDTO.class));
     }
 
     @Override
     public UserDTO getByName(String name) {
-        return mapToDTO(patientRepository.findByName(name));
+        return mapper.map(patientRepository.findByName(name),PatientDTO.class);
     }
+
 
     @Override
     public UserDTO updateByName(String name, UserDTO userDTO) {
@@ -73,6 +66,7 @@ public class PatientService implements UserService{
         Patient patient = patientRepository.findByName(name);
         if(patient!=null){
             patient.setMobileNo(patientDTO.getMobileNo());
+            patient.setUpdatedAt(LocalDateTime.now());
             return mapper.map(patient, PatientDTO.class);
         }
         else

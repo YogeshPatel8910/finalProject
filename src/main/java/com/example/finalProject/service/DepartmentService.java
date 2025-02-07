@@ -29,7 +29,7 @@ public class DepartmentService {
     public DepartmentDTO updateDepartment(long id, DepartmentDTO departmentDTO) {
             Department department = departmentRepository.findById(id).orElse(null);
             if(department!=null){
-                department.setName(departmentDTO.getName());
+                mapper.map(departmentDTO,department);
                 return mapper.map(department,DepartmentDTO.class);
             }
             else
@@ -56,5 +56,9 @@ public class DepartmentService {
 
     public DepartmentDTO getById(long id) {
         return mapper.map(departmentRepository.findById(id), DepartmentDTO.class);
+    }
+
+    public DepartmentDTO getByName(String name) {
+        return mapper.map(departmentRepository.findByName(name),DepartmentDTO.class);
     }
 }

@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -18,17 +18,16 @@ public class Doctor extends User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "branchId")
     private Branch branch;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "departmentId")
     private Department department;
 
-    private List<LocalDate> availableDays;
+    private Set<LocalDate> availableDays;
 
     @JsonIgnore
     @OneToMany(mappedBy = "doctor")

@@ -5,7 +5,7 @@ import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.Department;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -17,7 +17,7 @@ public class DoctorDTO extends UserDTO{
 
     private Department department;
 
-    private List<Date> availableDays;
+    private List<LocalDate> availableDays;
 
     private List<Appointment> appointment;
 

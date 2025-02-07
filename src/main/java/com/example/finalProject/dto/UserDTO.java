@@ -4,6 +4,7 @@ import com.example.finalProject.model.ERole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "role",
-        visible = true
+        visible = true,
+        requireTypeIdForSubtypes = OptBoolean.FALSE
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = UserDTO.class,name = "ROLE_ADMIN"),
@@ -23,7 +25,7 @@ import java.time.LocalDateTime;
 public class UserDTO {
     private Long id;
 
-    private ERole role;
+    private ERole roleName;
 
     private String name;
 

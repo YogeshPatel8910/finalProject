@@ -5,15 +5,11 @@ import com.example.finalProject.model.ERole;
 import com.example.finalProject.service.UserFactory;
 import com.example.finalProject.service.UserService;
 import com.example.finalProject.util.JwtTokenUtil;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/{role}")
@@ -25,33 +21,28 @@ public class UserController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @GetMapping("/{name}")
-    @PreAuthorize("hasRole('ADMIN') or #name == authentication.name")
-    public ResponseEntity<UserDTO> getUserByName(@RequestHeader("Authorization") String token,
-                                              @PathVariable(name = "role")String role,
-                                              @PathVariable(name = "name")String name){
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getUserByName(@PathVariable(name = "role")String role,
+                                                 Authentication authentication){
+        System.out.println(authentication);;
+        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
+        UserDTO users = userService.getByName(authentication.getName());
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+    @PutMapping("/profile")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "role")String role,
+                                              @RequestBody UserDTO userDTO,
+                                              Authentication authentication){
+        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
+        UserDTO users = userService.updateByName(authentication.getName(), userDTO);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+    @DeleteMapping("/profile")
+    public ResponseEntity<HttpStatus> updateUser(@PathVariable(name = "role")String role,
+                                                 Authentication authentication){
+        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
 
-        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
-        UserDTO users = userService.getByName(name);
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-    @PutMapping("/{name}")
-    @PreAuthorize("hasRole('ADMIN') or #name == authentication.name")
-    public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String token,
-                                              @PathVariable(name = "role")String role,
-                                              @PathVariable(name = "name")String name,
-                                              @RequestBody UserDTO userDTO){
-        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
-        UserDTO users = userService.updateByName(name,userDTO);
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-    @DeleteMapping("/{name}")
-    @PreAuthorize("hasRole('ADMIN') or #name == authentication.name")
-    public ResponseEntity<HttpStatus> updateUser(@RequestHeader("Authorization") String token,
-                                              @PathVariable(name = "role")String role,
-                                              @PathVariable(name = "name")String name){
-        UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
-        boolean isDeleted = userService.deleteByName(name);
+        boolean isDeleted = userService.deleteByName(authentication.getName());
         if(isDeleted)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
