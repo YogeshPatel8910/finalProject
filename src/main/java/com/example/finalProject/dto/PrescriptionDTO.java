@@ -10,7 +10,7 @@ public class PrescriptionDTO {
 
     private MedicalReport medicalReport;
 
-    private String medicineName;
+    private String name;
 
     private String dosage;
 

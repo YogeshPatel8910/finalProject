@@ -22,7 +22,7 @@ public class BranchService {
     public Page<BranchDTO> getAllBranch(int page, int size, String sortBy, String direction) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
-        Pageable pageable = PageRequest.of(page, size, sort).first().next().previous();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return branchRepository.findAll(pageable).map(branch -> mapper.map(branch, BranchDTO.class));
     }
 
@@ -56,5 +56,9 @@ public class BranchService {
         }
         else
             return false;
+    }
+
+    public BranchDTO getByName(String name) {
+        return mapper.map(branchRepository.findByName(name),BranchDTO.class);
     }
 }

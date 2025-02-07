@@ -16,7 +16,7 @@ public class Prescription {
     @JoinColumn(name = "medicalReportId")
     private MedicalReport medicalReport;
 
-    private String medicineName;
+    private String name;
 
     private String dosage;
 

@@ -4,7 +4,6 @@ import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.model.ERole;
-import com.example.finalProject.model.User;
 import com.example.finalProject.repository.DoctorRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
@@ -17,6 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service("doctorService")
 public class DoctorService implements UserService{
@@ -42,8 +45,9 @@ public class DoctorService implements UserService{
         Doctor doctor = mapper.map(doctorDTO,Doctor.class);
         doctor.setRole(roleRepository.findByName(ERole.ROLE_DOCTOR));
         doctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
+        doctor.setCreatedAt(LocalDateTime.now());
         Doctor newUser = doctorRepository.save(doctor);
-        return mapToDTO(newUser);
+        return mapper.map(newUser,DoctorDTO.class);
     }
 
     @Override
@@ -51,12 +55,12 @@ public class DoctorService implements UserService{
     Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
     Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
     Pageable pageable = PageRequest.of(page, size, sort).first().next().previous();
-        return doctorRepository.findAll(pageable).map(this::mapToDTO);
+        return doctorRepository.findAll(pageable).map(doctor -> mapper.map(doctor,DoctorDTO.class));
     }
 
     @Override
     public UserDTO getByName(String name) {
-        return mapToDTO(doctorRepository.findByName(name));
+        return mapper.map(doctorRepository.findByName(name),DoctorDTO.class);
     }
 
     @Override
@@ -65,6 +69,7 @@ public class DoctorService implements UserService{
         Doctor doctor = doctorRepository.findByName(name);
         if(doctor!=null){
             doctor.setMobileNo(doctorDTO.getMobileNo());
+            doctor.setUpdatedAt(LocalDateTime.now());
             return mapper.map(doctor, DoctorDTO.class);
         }
         else
@@ -82,10 +87,22 @@ public class DoctorService implements UserService{
             return false;
     }
 
+    public DoctorDTO setDate(String user,Set<LocalDate> dates) {
+        Doctor doctor = doctorRepository.findByName(user);
+        if (doctor != null) {
+            Set<LocalDate> availableDays = doctor.getAvailableDays();
+            if(availableDays == null) {
+                availableDays = dates ;
+            } else
+                availableDays.addAll(dates);
+            doctor.setAvailableDays(availableDays);
+            return mapper.map(doctor, DoctorDTO.class);
+        }
+        else
+            return null;
+    }
 
-    private DoctorDTO mapToDTO(Doctor doctor) {
-        DoctorDTO doctorDTO = mapper.map(doctor,DoctorDTO.class);
-        doctor.setRole(roleRepository.findByName(ERole.ROLE_DOCTOR));
-        return doctorDTO;
+    public Doctor getDoctor(String doctor) {
+        return doctorRepository.findByName(doctor);
     }
 }
