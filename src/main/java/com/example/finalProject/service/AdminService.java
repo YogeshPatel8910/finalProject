@@ -1,6 +1,5 @@
 package com.example.finalProject.service;
 
-import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
@@ -18,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Qualifier("adminService")
@@ -37,6 +38,7 @@ public  class AdminService implements UserService{
     public UserDTO registerUser(UserDTO userDTO) {
         User user = mapper.map(userDTO,User.class);
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
         User newUser = userRepository.save(user);
         return mapper.map(newUser,UserDTO.class);
     }
@@ -51,7 +53,7 @@ public  class AdminService implements UserService{
 
     @Override
     public UserDTO getByName(String name) {
-        return mapToDTO(userRepository.findByName(name));
+        return mapper.map(userRepository.findByName(name), UserDTO.class);
     }
 
     @Override
@@ -61,6 +63,7 @@ public  class AdminService implements UserService{
             user.setName(userDTO.getName());
             user.setEmail(userDTO.getEmail());
             user.setMobileNo(userDTO.getMobileNo());
+            user.setUpdatedAt(LocalDateTime.now());
             return mapper.map(user, UserDTO.class);
         }
         else
@@ -88,7 +91,6 @@ public  class AdminService implements UserService{
         else{
             userDTO = mapper.map(user,UserDTO.class);
         }
-        userDTO.setRole(user.getRole().getName());
         return userDTO;
     }
 
@@ -101,5 +103,9 @@ public  class AdminService implements UserService{
         }
         else
             return false;
+    }
+
+    public UserDTO getById(long id) {
+        return mapToDTO(userRepository.findById(id).orElse(null));
     }
 }

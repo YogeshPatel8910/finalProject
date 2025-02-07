@@ -32,6 +32,11 @@ public class Appointment {
     @JoinColumn(name = "doctorId")
     private Doctor doctor;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "departmentId")
+    private Department department;
+
     private String reason;
 
     private LocalDate date;
