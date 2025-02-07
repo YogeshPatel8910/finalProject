@@ -21,4 +21,8 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Doctor> doctors;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "department")
+    private List<Appointment> appointments;
+
 }

@@ -1,6 +1,7 @@
 package com.example.finalProject.dto;
 
 import com.example.finalProject.model.Doctor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -12,5 +13,6 @@ public class DepartmentDTO {
 
     private String name;
 
+    @JsonIgnore
     private List<Doctor> doctors;
 }
