@@ -33,17 +33,21 @@ public class AdminController {
     private DoctorService doctorService;
 
     @GetMapping()
-    public ResponseEntity<List<UserDTO>> getAllUser(@PathVariable(name = "role")String role,
-                                                    @RequestParam(name = "page",defaultValue = "0")int page,
+    public ResponseEntity<?> getAllUser(@RequestParam(name = "page",defaultValue = "0")int page,
                                                     @RequestParam(name = "size",defaultValue = "10")int size,
                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                                                     @RequestParam(name = "direction", defaultValue = "asc") String direction) {
         Page<UserDTO> users = adminService.getAllUsers(page,size,sortBy,direction);
         return new ResponseEntity<>(users.getContent(), HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable(name = "name")long id){
+        UserDTO user = adminService.getById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteAdmin(@PathVariable(name = "id")long id){
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable(name = "id")long id){
         boolean isDeleted = adminService.deleteById(id);
         if(isDeleted)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
