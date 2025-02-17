@@ -5,6 +5,7 @@ import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.MedicalReportDTO;
 import com.example.finalProject.service.AppointmentService;
 import com.example.finalProject.service.DoctorService;
+import com.example.finalProject.service.MedicalReportService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,9 @@ public class DoctorController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private MedicalReportService medicalReportService;
 
     @Transactional
     @PutMapping("/availability")
@@ -72,6 +76,13 @@ public class DoctorController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @PutMapping("/appointment/{id}")
+    public ResponseEntity<MedicalReportDTO> createReport(@PathVariable(name = "id")long id,
+                                                         @RequestBody MedicalReportDTO medicalReportDTO,
+                                                         Authentication authentication) {
+            MedicalReportDTO medicalReport = medicalReportService.createReport(id,authentication.getName(),medicalReportDTO);
+            return new ResponseEntity<>(medicalReport, HttpStatus.OK);
     }
 
 

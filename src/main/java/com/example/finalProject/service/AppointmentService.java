@@ -135,4 +135,8 @@ public class AppointmentService {
         else
             return false;
     }
+
+    public AppointmentDTO getAppointByid(long id) {
+        return mapper.map(appointmentRepository.findById(id),AppointmentDTO.class);
+    }
 }

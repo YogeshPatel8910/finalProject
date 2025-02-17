@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Check if Authorization header contains a Bearer token
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
-
                 // Validate token
                 if (jwtTokenUtil.validateToken(token)) {
                     String username = jwtTokenUtil.extractUsername(token);

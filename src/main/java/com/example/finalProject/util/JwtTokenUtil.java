@@ -14,8 +14,6 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil {
 
-    private final String secret = "8sbStaifF33osCGE3KwAM953bSDegeWt";
-
     public String generateToken(String username,String role){
         Map<String, Object> claim = new HashMap<>();
         claim.put("role",role); // Add roles as a custom claim
@@ -23,7 +21,7 @@ public class JwtTokenUtil {
         return Jwts.builder()
                 .subject(username)
                 .claims(claim)
-                .issuedAt(new Date())
+                .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+(30*60*1000)))
                 .signWith(getSigningKey())
                 .compact();
@@ -37,6 +35,7 @@ public class JwtTokenUtil {
 
     SecretKey getSigningKey(){
 //        byte[] keyBytes = Base64.getDecoder().decode(secret);
+        String secret = "8sbStaifF33osCGE3KwAM953bSDegeWt";
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 
         return Keys.hmacShaKeyFor(keyBytes);

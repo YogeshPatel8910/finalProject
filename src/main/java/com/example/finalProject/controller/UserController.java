@@ -24,7 +24,6 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<UserDTO> getUserByName(@PathVariable(name = "role")String role,
                                                  Authentication authentication){
-        System.out.println(authentication);;
         UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
         UserDTO users = userService.getByName(authentication.getName());
         return new ResponseEntity<>(users, HttpStatus.OK);

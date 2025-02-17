@@ -13,11 +13,11 @@ public class MedicalReportDTO {
 
     private Long id;
 
-    private Patient patient;
+    private String patientName;
 
-    private Doctor doctor;
+    private String doctorName;
 
-    private Appointment appointment;
+    private Long appointmentId;
 
     private String symptom;
 
