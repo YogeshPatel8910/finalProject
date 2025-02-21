@@ -7,6 +7,7 @@ import com.example.finalProject.model.Patient;
 import com.example.finalProject.repository.PatientRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("patientService")
 public class PatientService implements UserService{
@@ -34,6 +37,15 @@ public class PatientService implements UserService{
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private DoctorService doctorService;
+
+    @Autowired
+    private BranchService branchService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @Override
     public UserDTO registerUser(UserDTO userDTO) {
@@ -65,7 +77,10 @@ public class PatientService implements UserService{
         PatientDTO patientDTO = (PatientDTO) userDTO;
         Patient patient = patientRepository.findByName(name);
         if(patient!=null){
-            patient.setMobileNo(patientDTO.getMobileNo());
+//            mapper.map(patientDTO,patient);
+            mapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+            mapper.map(patientDTO, patient);
+            System.out.println(patient);
             patient.setUpdatedAt(LocalDateTime.now());
             return mapper.map(patient, PatientDTO.class);
         }
@@ -84,4 +99,11 @@ public class PatientService implements UserService{
             return false;
     }
 
+    public List<?> getData() {
+        List<Object> data = new ArrayList<>();
+        data.add(doctorService.getAllDoctor());
+        data.add(branchService.getAll());
+        data.add(departmentService.getAll());
+        return data;
+    }
 }

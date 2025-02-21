@@ -61,4 +61,8 @@ public class BranchService {
     public BranchDTO getByName(String name) {
         return mapper.map(branchRepository.findByName(name),BranchDTO.class);
     }
+
+    public Object getAll() {
+        return branchRepository.findAll();
+    }
 }

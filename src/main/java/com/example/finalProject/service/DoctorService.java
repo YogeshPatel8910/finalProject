@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service("doctorService")
@@ -104,5 +105,9 @@ public class DoctorService implements UserService{
 
     public Doctor getDoctor(String doctor) {
         return doctorRepository.findByName(doctor);
+    }
+
+    public List<DoctorDTO> getAllDoctor() {
+        return doctorRepository.findAll().stream().map(doctor -> mapper.map(doctor,DoctorDTO.class)).toList();
     }
 }

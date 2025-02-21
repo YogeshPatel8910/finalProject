@@ -61,4 +61,8 @@ public class DepartmentService {
     public DepartmentDTO getByName(String name) {
         return mapper.map(departmentRepository.findByName(name),DepartmentDTO.class);
     }
+
+    public Object getAll() {
+        return departmentRepository.findAll();
+    }
 }

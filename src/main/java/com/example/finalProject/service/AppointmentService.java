@@ -34,8 +34,8 @@ public class AppointmentService {
 
     public AppointmentDTO createAppointment(String user, AppointmentDTO appointmentDTO) {
         Patient patient = mapper.map(patientService.getByName(user),Patient.class);
-        Doctor doctor = mapper.map(doctorService.getByName(appointmentDTO.getDepartmentName()),Doctor.class);
-        Branch branch = mapper.map(branchService.getByName(appointmentDTO.getDepartmentName()),Branch.class);
+        Doctor doctor = mapper.map(doctorService.getByName(appointmentDTO.getDoctorName()),Doctor.class);
+        Branch branch = mapper.map(branchService.getByName(appointmentDTO.getBranchName()),Branch.class);
         Department department = mapper.map(departmentService.getByName(appointmentDTO.getDepartmentName()),Department.class);
         Appointment appointment = mapper.map(appointmentDTO,Appointment.class);
         appointment.setPatient(patient);
@@ -67,8 +67,9 @@ public class AppointmentService {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
         Pageable pageable = PageRequest.of(page, size, sort);
-        List<EStatus> status = Arrays.asList(EStatus.PENDING,EStatus.CONFIRMED);
-        return appointmentRepository.findAllByDoctorNameAndStatusIn(name,status,pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
+//        List<EStatus> status = Arrays.asList(EStatus.PENDING,EStatus.CONFIRMED);
+//        return appointmentRepository.findAllByDoctorNameAndStatusIn(name,status,pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
+        return appointmentRepository.findAllByDoctorName(name,pageable).map(appointment-> mapper.map(appointment,AppointmentDTO.class));
     }
 
     public Page<AppointmentDTO> getAppointmentHistoryForDoctor(String name, int page, int size, String sortBy, String direction) {
@@ -94,12 +95,12 @@ public class AppointmentService {
 
     }
 
-    public boolean rescheduleAppointment(String name, long id, LocalDate date) {
+    public boolean rescheduleAppointment(String name, long id, AppointmentDTO appointmentDTO) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
             if(appointment.getPatient().getName().equals(name)) {
                 appointment.setStatus(EStatus.PENDING);
-                appointment.setDate(date);
+                appointment.setDate(appointmentDTO.getDate());
                 return true;
             }
             else

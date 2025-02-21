@@ -1,6 +1,7 @@
 package com.example.finalProject.controller;
 
 import com.example.finalProject.dto.AppointmentDTO;
+import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.service.AppointmentService;
 import com.example.finalProject.service.PatientService;
 import jakarta.transaction.Transactional;
@@ -64,14 +65,18 @@ public class PatientController {
     @PutMapping("/appointment/{id}/reschedule")
     @Transactional
     public ResponseEntity<AppointmentDTO> rescheduleAppointment(@PathVariable(name = "id")long id,
-                                                            @RequestBody LocalDate date,
+                                                            @RequestBody AppointmentDTO appointmentDTO,
                                                             Authentication authentication) {
-        boolean isDeleted = appointmentService.rescheduleAppointment(authentication.getName(),id,date);
+        boolean isDeleted = appointmentService.rescheduleAppointment(authentication.getName(),id,appointmentDTO);
         if(isDeleted)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    @GetMapping("/data")
+    public ResponseEntity<?> getData() {
+        List<?> data = patientService.getData();
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
 }

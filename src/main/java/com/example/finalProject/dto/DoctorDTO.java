@@ -5,6 +5,7 @@ import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.Department;
 import lombok.Data;
 
+import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,9 +14,9 @@ public class DoctorDTO extends UserDTO{
 
     private Long id;
 
-    private Branch branch;
+    private String branchName;
 
-    private Department department;
+    private String departmentName;
 
     private List<LocalDate> availableDays;
 

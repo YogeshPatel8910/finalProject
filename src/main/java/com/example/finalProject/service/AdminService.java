@@ -58,7 +58,7 @@ public  class AdminService implements UserService{
 
     @Override
     public UserDTO updateByName(String name, UserDTO userDTO) {
-        User user = userRepository.findByName(name);
+        User user = userRepository.findByName(name).orElse(null);
         if(user!=null){
             user.setName(userDTO.getName());
             user.setEmail(userDTO.getEmail());

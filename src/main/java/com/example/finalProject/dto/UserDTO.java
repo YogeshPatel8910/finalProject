@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "role",
+        property = "roleName",
         visible = true,
         requireTypeIdForSubtypes = OptBoolean.FALSE
 )
