@@ -5,6 +5,7 @@ import com.example.finalProject.model.ERole;
 import com.example.finalProject.service.UserFactory;
 import com.example.finalProject.service.UserService;
 import com.example.finalProject.util.JwtTokenUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,8 @@ public class UserController {
         UserDTO users = userService.getByName(authentication.getName());
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+    @Transactional
     @PutMapping("/profile")
     public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "role")String role,
                                               @RequestBody UserDTO userDTO,
