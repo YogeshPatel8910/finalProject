@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -33,12 +35,18 @@ public class AdminController {
     private DoctorService doctorService;
 
     @GetMapping()
-    public ResponseEntity<?> getAllUser(@RequestParam(name = "page",defaultValue = "0")int page,
+    public ResponseEntity<Map<String,Object>> getAllUser(@RequestParam(name = "page",defaultValue = "0")int page,
                                                     @RequestParam(name = "size",defaultValue = "10")int size,
                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-                                                    @RequestParam(name = "direction", defaultValue = "asc") String direction) {
-        Page<UserDTO> users = adminService.getAllUsers(page,size,sortBy,direction);
-        return new ResponseEntity<>(users.getContent(), HttpStatus.OK);
+                                                    @RequestParam(name = "direction", defaultValue = "asc") String direction,
+                                                    @RequestParam(name = "search",required = false) ERole search) {
+        Page<UserDTO> users = adminService.getAllUsers(page,size,sortBy,direction,search);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",users.getContent());
+        response.put("TotalElements",users.getTotalElements());
+        response.put("NumberOfElements",users.getNumberOfElements());
+        response.put("pageNumber",users.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable(name = "name")long id){

@@ -58,7 +58,6 @@ public class PatientService implements UserService{
         return mapper.map(newUser,PatientDTO.class);
     }
 
-    @Override
     public Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
@@ -99,7 +98,7 @@ public class PatientService implements UserService{
             return false;
     }
 
-    public List<?> getData() {
+    public List<Object> getData() {
         List<Object> data = new ArrayList<>();
         data.add(doctorService.getAllDoctor());
         data.add(branchService.getAll());

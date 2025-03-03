@@ -31,7 +31,6 @@ public class DoctorController {
     @Autowired
     private MedicalReportService medicalReportService;
 
-    @Transactional
     @PutMapping("/availability")
     public ResponseEntity<DoctorDTO> setAvailability(Authentication authentication,
                                                      @RequestBody Set<LocalDate> dates) {

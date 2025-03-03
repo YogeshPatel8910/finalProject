@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 
 public interface UserService {
     UserDTO registerUser(UserDTO userDTO);
-    Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction);
+
+//    Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction, String search);
+
     UserDTO getByName(String name);
     UserDTO updateByName(String name, UserDTO userDTO);
     boolean deleteByName(String name);

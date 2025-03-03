@@ -7,6 +7,7 @@ import com.example.finalProject.model.ERole;
 import com.example.finalProject.repository.DoctorRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,7 +52,6 @@ public class DoctorService implements UserService{
         return mapper.map(newUser,DoctorDTO.class);
     }
 
-    @Override
     public Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction){
     Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
     Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
@@ -88,19 +88,12 @@ public class DoctorService implements UserService{
             return false;
     }
 
+    @Transactional
     public DoctorDTO setDate(String user,Set<LocalDate> dates) {
         Doctor doctor = doctorRepository.findByName(user);
-        if (doctor != null) {
-            Set<LocalDate> availableDays = doctor.getAvailableDays();
-            if(availableDays == null) {
-                availableDays = dates ;
-            } else
-                availableDays.addAll(dates);
-            doctor.setAvailableDays(availableDays);
-            return mapper.map(doctor, DoctorDTO.class);
-        }
-        else
-            return null;
+        doctor.getAvailableDays().addAll(dates);
+        doctorRepository.save(doctor);
+        return mapper.map(doctor, DoctorDTO.class);
     }
 
     public Doctor getDoctor(String doctor) {

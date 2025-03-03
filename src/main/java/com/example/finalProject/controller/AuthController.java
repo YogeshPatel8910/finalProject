@@ -5,10 +5,10 @@ import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.service.AuthService;
 import com.example.finalProject.service.UserFactory;
 import com.example.finalProject.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,9 +38,35 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         UserService userService = userFactory.getService(userDTO.getRoleName());
-        UserDTO response = userService.registerUser(userDTO);
+        Map<String, Object> response = new HashMap<>();
+        UserDTO newUser = userService.registerUser(userDTO);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//
+//        try {
+//            String userJson = objectMapper.writeValueAsString(newUser);
+//            response.put("user", userJson);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(Map.of("error", "Error serializing user data"));
+//        }
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDTO.getName(),userDTO.getPassword());
+        Authentication authentication = authenticationManager.authenticate(authToken);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Optional<String> role = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst();
+        if (role.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "User has no assigned role"));
+        }
+        String token = authService.generateToken(userDetails.getUsername(),role.get());
+        response.put("token", token);
+        response.put("role", role.get().toLowerCase().substring(5) );
+        response.put("user", userDTO);
+        System.out.println(response);
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 

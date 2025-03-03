@@ -4,6 +4,7 @@ import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.model.Doctor;
+import com.example.finalProject.model.ERole;
 import com.example.finalProject.model.Patient;
 import com.example.finalProject.model.User;
 import com.example.finalProject.repository.UserRepository;
@@ -43,12 +44,14 @@ public  class AdminService implements UserService{
         return mapper.map(newUser,UserDTO.class);
     }
 
-    @Override
-    public Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction) {
+    public Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction, ERole search) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
         Pageable pageable = PageRequest.of(page, size, sort);
-        return userRepository.findAll(pageable).map(this::mapToDTO);
+        if(search==null)
+            return userRepository.findAll(pageable).map(this::mapToDTO);
+        else
+            return userRepository.findAllByRoleName(search,pageable).map(this::mapToDTO);
     }
 
     @Override
