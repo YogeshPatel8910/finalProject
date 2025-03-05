@@ -15,7 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -39,49 +41,68 @@ public class DoctorController {
     }
 
     @GetMapping("/appointment")
-    public ResponseEntity<List<AppointmentDTO>> getCurrentAppointments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+    public ResponseEntity<Map<String ,Object>> getCurrentAppointments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
                                                                        @RequestParam(name = "size",required = false,defaultValue = "10")int size,
                                                                        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                                                                        @RequestParam(name = "direction", defaultValue = "asc") String direction,
                                                                        Authentication authentication){
         Page<AppointmentDTO> appointments = appointmentService.getCurrentAppointmentsForDoctor(authentication.getName(),page,size,sortBy,direction);
-        return new ResponseEntity<>(appointments.getContent(),HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",appointments.getContent());
+        response.put("TotalElements",appointments.getTotalElements());
+        response.put("NumberOfElements",appointments.getNumberOfElements());
+        response.put("pageNumber",appointments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/appointment/history")
-    public ResponseEntity<List<AppointmentDTO>> getAppointmentHistory(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+    public ResponseEntity<Map<String ,Object>> getAppointmentHistory(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
                                                                       @RequestParam(name = "size",required = false,defaultValue = "10")int size,
                                                                       @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                                                                       @RequestParam(name = "direction", defaultValue = "asc") String direction,
                                                                       Authentication authentication){
         Page<AppointmentDTO> appointments = appointmentService.getAppointmentHistoryForDoctor(authentication.getName(),page,size,sortBy,direction);
-        return new ResponseEntity<>(appointments.getContent(),HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",appointments.getContent());
+        response.put("TotalElements",appointments.getTotalElements());
+        response.put("NumberOfElements",appointments.getNumberOfElements());
+        response.put("pageNumber",appointments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PutMapping("/appointment/{id}/cancel")
-    @Transactional
+
+    @PutMapping("/appointment/{id}/confirm")
     public ResponseEntity<AppointmentDTO> confirmAppointment(@PathVariable(name = "id")long id,
                                                             Authentication authentication) {
-        boolean isDeleted = appointmentService.confirmAppointment(authentication.getName(),id);
-        if(isDeleted)
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        boolean isUpdated = appointmentService.confirmAppointment(authentication.getName(),id);
+        if(isUpdated)
+            return new ResponseEntity<>(HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
     @PutMapping("/appointment/{id}/noShow")
-    @Transactional
     public ResponseEntity<AppointmentDTO> noShowAppointment(@PathVariable(name = "id")long id,
                                                              Authentication authentication) {
-        boolean isDeleted = appointmentService.noShowAppointment(authentication.getName(),id);
-        if(isDeleted)
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        boolean noShow = appointmentService.noShowAppointment(authentication.getName(),id);
+        if(noShow)
+            return new ResponseEntity<>(HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
     @PutMapping("/appointment/{id}")
     public ResponseEntity<MedicalReportDTO> createReport(@PathVariable(name = "id")long id,
                                                          @RequestBody MedicalReportDTO medicalReportDTO,
                                                          Authentication authentication) {
-            MedicalReportDTO medicalReport = medicalReportService.createReport(id,authentication.getName(),medicalReportDTO);
-            return new ResponseEntity<>(medicalReport, HttpStatus.OK);
+
+        MedicalReportDTO medicalReport = medicalReportService.createReport(id,authentication.getName(),medicalReportDTO);
+        if(medicalReport != null){
+            boolean isCompleted = appointmentService.completeAppointment(authentication.getName(),id);
+            if(isCompleted){
+                return new ResponseEntity<>(medicalReport,HttpStatus.OK);
+            }
+//          deleteMedicalReport
+        }
+        return new ResponseEntity<>(medicalReport, HttpStatus.OK);
     }
 
 

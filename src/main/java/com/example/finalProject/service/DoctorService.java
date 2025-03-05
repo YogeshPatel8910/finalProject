@@ -55,7 +55,7 @@ public class DoctorService implements UserService{
     public Page<UserDTO> getAllUsers(int page, int size, String sortBy, String direction){
     Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
     Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
-    Pageable pageable = PageRequest.of(page, size, sort).first().next().previous();
+    Pageable pageable = PageRequest.of(page, size, sort);
         return doctorRepository.findAll(pageable).map(doctor -> mapper.map(doctor,DoctorDTO.class));
     }
 
@@ -65,6 +65,7 @@ public class DoctorService implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDTO updateByName(String name, UserDTO userDTO) {
         DoctorDTO doctorDTO = (DoctorDTO) userDTO;
         Doctor doctor = doctorRepository.findByName(name);

@@ -17,6 +17,10 @@ public class Department {
 
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "branchId")
+    private Branch branch;
+
     @JsonIgnore
     @OneToMany(mappedBy = "department")
     private List<Doctor> doctors;

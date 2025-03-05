@@ -48,6 +48,7 @@ public class AdminController {
         response.put("pageNumber",users.getNumber());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable(name = "name")long id){
         UserDTO user = adminService.getById(id);
@@ -62,13 +63,19 @@ public class AdminController {
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
     @GetMapping("/department")
-    public ResponseEntity<List<DepartmentDTO>> getAllDepartments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+    public ResponseEntity<Map<String, Object>> getAllDepartments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
                                                     @RequestParam(name = "size",required = false,defaultValue = "10")int size,
                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                                                     @RequestParam(name = "direction", defaultValue = "asc") String direction) {
         Page<DepartmentDTO> departments = departmentService.getAllDepartments(page,size,sortBy,direction);
-        return new ResponseEntity<>(departments.getContent(), HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",departments.getContent());
+        response.put("TotalElements",departments.getTotalElements());
+        response.put("NumberOfElements",departments.getNumberOfElements());
+        response.put("pageNumber",departments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/department")
@@ -90,7 +97,7 @@ public class AdminController {
 
     @DeleteMapping("/department/{id}")
     public ResponseEntity<HttpStatus> deleteDepartment(@PathVariable(name = "id")long id){
-        boolean isDeleted = departmentService.deleteSubmission(id);
+        boolean isDeleted = departmentService.deleteDepartment(id);
         if(isDeleted)
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
@@ -98,12 +105,17 @@ public class AdminController {
     }
 
     @GetMapping("/branch")
-    public ResponseEntity<List<BranchDTO>> getAllBranch(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+    public ResponseEntity<Map<String,Object>> getAllBranch(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
                                                                  @RequestParam(name = "size",required = false,defaultValue = "10")int size,
                                                                  @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                                                                  @RequestParam(name = "direction", defaultValue = "asc") String direction) {
         Page<BranchDTO> departments = branchService.getAllBranch(page,size,sortBy,direction);
-        return new ResponseEntity<>(departments.getContent(), HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",departments.getContent());
+        response.put("TotalElements",departments.getTotalElements());
+        response.put("NumberOfElements",departments.getNumberOfElements());
+        response.put("pageNumber",departments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/branch")
@@ -119,7 +131,7 @@ public class AdminController {
 
     @PutMapping("/branch/{id}")
     public ResponseEntity<BranchDTO> updateBranch(@PathVariable(name = "id") long id, @RequestBody BranchDTO branchDTO) {
-        return new ResponseEntity<>(branchService.updateBranch(id, branchDTO),HttpStatus.OK);
+        return new ResponseEntity<>(branchService.updateBranch(id, branchDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/branch/{id}")
@@ -147,7 +159,4 @@ public class AdminController {
 //            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 //    }
 
-
-
-
-};
+}

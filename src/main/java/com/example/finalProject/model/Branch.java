@@ -23,6 +23,10 @@ public class Branch {
 
     @JsonIgnore
     @OneToMany(mappedBy = "branch")
+    private List<Department> departments;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "branch")
     private List<Doctor> doctors;
 
     @JsonIgnore

@@ -30,7 +30,6 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @Transactional
     @PutMapping("/profile")
     public ResponseEntity<UserDTO> updateUser(@PathVariable(name = "role")String role,
                                               @RequestBody UserDTO userDTO,
@@ -39,8 +38,9 @@ public class UserController {
         UserDTO users = userService.updateByName(authentication.getName(), userDTO);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @DeleteMapping("/profile")
-    public ResponseEntity<HttpStatus> updateUser(@PathVariable(name = "role")String role,
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable(name = "role")String role,
                                                  Authentication authentication){
         UserService userService = userFactory.getService(ERole.valueOf("ROLE_"+role.toUpperCase()));
 

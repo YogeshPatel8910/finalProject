@@ -3,6 +3,7 @@ package com.example.finalProject.service;
 import com.example.finalProject.dto.DepartmentDTO;
 import com.example.finalProject.model.Department;
 import com.example.finalProject.repository.DepartmentRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,18 +27,18 @@ public class DepartmentService {
 
     }
 
+    @Transactional
     public DepartmentDTO updateDepartment(long id, DepartmentDTO departmentDTO) {
-            Department department = departmentRepository.findById(id).orElse(null);
-            if(department!=null){
-                mapper.map(departmentDTO,department);
-                return mapper.map(department,DepartmentDTO.class);
-            }
-            else
-                return null;
-
+        Department department = departmentRepository.findById(id).orElse(null);
+        if(department!=null){
+            mapper.map(departmentDTO,department);
+            return mapper.map(department,DepartmentDTO.class);
+        }
+        else
+            return null;
     }
 
-    public  boolean deleteSubmission(long id) {
+    public  boolean deleteDepartment(long id) {
         boolean isPresent = departmentRepository.existsById(id);
         if(isPresent){
             departmentRepository.deleteById(id);
@@ -50,7 +51,7 @@ public class DepartmentService {
     public Page<DepartmentDTO> getAllDepartments(int page, int size, String sortBy, String direction) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
-        Pageable pageable = PageRequest.of(page, size, sort).first().next().previous();
+        Pageable pageable = PageRequest.of(page, size, sort);
         return departmentRepository.findAll(pageable).map(department -> mapper.map(department, DepartmentDTO.class));
     }
 

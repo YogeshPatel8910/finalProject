@@ -3,6 +3,7 @@ package com.example.finalProject.service;
 import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.model.Branch;
 import com.example.finalProject.repository.BranchRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,7 @@ public class BranchService {
         return mapper.map(branchRepository.findById(id),BranchDTO.class);
     }
 
+    @Transactional
     public BranchDTO updateBranch(long id, BranchDTO branchDTO) {
         Branch branch = branchRepository.findById(id).orElse(null);
         if(branch!=null){

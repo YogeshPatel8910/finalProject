@@ -7,6 +7,7 @@ import com.example.finalProject.model.Patient;
 import com.example.finalProject.repository.PatientRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,7 @@ public class PatientService implements UserService{
 
 
     @Override
+    @Transactional
     public UserDTO updateByName(String name, UserDTO userDTO) {
         PatientDTO patientDTO = (PatientDTO) userDTO;
         Patient patient = patientRepository.findByName(name);

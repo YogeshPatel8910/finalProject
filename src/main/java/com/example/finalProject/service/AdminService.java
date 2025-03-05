@@ -8,6 +8,7 @@ import com.example.finalProject.model.ERole;
 import com.example.finalProject.model.Patient;
 import com.example.finalProject.model.User;
 import com.example.finalProject.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,6 +61,7 @@ public  class AdminService implements UserService{
     }
 
     @Override
+    @Transactional
     public UserDTO updateByName(String name, UserDTO userDTO) {
         User user = userRepository.findByName(name).orElse(null);
         if(user!=null){

@@ -38,20 +38,10 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Map<String,Object>> registerUser(@RequestBody UserDTO userDTO) {
         UserService userService = userFactory.getService(userDTO.getRoleName());
         Map<String, Object> response = new HashMap<>();
         UserDTO newUser = userService.registerUser(userDTO);
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
-//
-//        try {
-//            String userJson = objectMapper.writeValueAsString(newUser);
-//            response.put("user", userJson);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(Map.of("error", "Error serializing user data"));
-//        }
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDTO.getName(),userDTO.getPassword());
         Authentication authentication = authenticationManager.authenticate(authToken);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -65,14 +55,14 @@ public class AuthController {
         String token = authService.generateToken(userDetails.getUsername(),role.get());
         response.put("token", token);
         response.put("role", role.get().toLowerCase().substring(5) );
-        response.put("user", userDTO);
+        response.put("user", newUser);
         System.out.println(response);
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Map<String,String>> login(@RequestBody LoginDTO loginDTO) {
         try{
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDTO.getName(), loginDTO.getPassword());
             Authentication authentication = authenticationManager.authenticate(authToken);

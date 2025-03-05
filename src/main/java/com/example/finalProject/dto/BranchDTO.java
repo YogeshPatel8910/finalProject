@@ -1,6 +1,7 @@
 package com.example.finalProject.dto;
 
 import com.example.finalProject.model.Appointment;
+import com.example.finalProject.model.Department;
 import com.example.finalProject.model.Doctor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -17,6 +18,9 @@ public class BranchDTO {
     private String address;
 
     private String phone;
+
+    @JsonIgnore
+    private List<Department> departments;
 
     @JsonIgnore
     private List<Doctor> doctors;

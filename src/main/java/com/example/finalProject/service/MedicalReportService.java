@@ -28,6 +28,7 @@ public class MedicalReportService {
 
     ModelMapper mapper = new ModelMapper();
 
+
     public MedicalReportDTO createReport(long id, String name, MedicalReportDTO medicalReportDTO) {
         Appointment appointment = mapper.map(appointmentService.getAppointByid(id), Appointment.class);
         Patient patient = mapper.map(patientService.getByName(appointment.getPatient().getName()),Patient.class);

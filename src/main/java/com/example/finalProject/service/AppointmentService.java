@@ -3,6 +3,7 @@ package com.example.finalProject.service;
 import com.example.finalProject.dto.AppointmentDTO;
 import com.example.finalProject.model.*;
 import com.example.finalProject.repository.AppointmentRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -80,6 +81,7 @@ public class AppointmentService {
         return appointmentRepository.findAllByDoctorNameAndStatusIn(name,status,pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
     }
 
+    @Transactional
     public boolean cancelAppointment(String name, long id) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
@@ -95,6 +97,7 @@ public class AppointmentService {
 
     }
 
+    @Transactional
     public boolean rescheduleAppointment(String name, long id, AppointmentDTO appointmentDTO) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
@@ -110,6 +113,7 @@ public class AppointmentService {
             return false;
     }
 
+    @Transactional
     public boolean confirmAppointment(String name, long id) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
@@ -123,11 +127,28 @@ public class AppointmentService {
         else
             return false;
     }
+
+    @Transactional
     public boolean noShowAppointment(String name, long id) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
             if(appointment.getPatient().getName().equals(name)) {
                 appointment.setStatus(EStatus.NO_SHOW);
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
+    @Transactional
+    public boolean completeAppointment(String name, long id) {
+        Appointment appointment = appointmentRepository.findById(id).orElse(null);
+        if(appointment!=null){
+            if(appointment.getPatient().getName().equals(name)) {
+                appointment.setStatus(EStatus.COMPLETED);
                 return true;
             }
             else
