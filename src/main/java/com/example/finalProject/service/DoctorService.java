@@ -90,11 +90,22 @@ public class DoctorService implements UserService{
     }
 
     @Transactional
-    public DoctorDTO setDate(String user,Set<LocalDate> dates) {
+    public Set<LocalDate> setDate(String user,Set<LocalDate> dates) {
         Doctor doctor = doctorRepository.findByName(user);
         doctor.getAvailableDays().addAll(dates);
         doctorRepository.save(doctor);
-        return mapper.map(doctor, DoctorDTO.class);
+        return doctor.getAvailableDays();
+    }
+    @Transactional
+    public Set<LocalDate> deleteDate(String user,Set<LocalDate> dates) {
+        Doctor doctor = doctorRepository.findByName(user);
+        doctor.getAvailableDays().removeAll(dates);
+        doctorRepository.save(doctor);
+        return doctor.getAvailableDays();
+    }
+    public Set<LocalDate> getDate(String user) {
+        Doctor doctor = doctorRepository.findByName(user);
+        return doctor.getAvailableDays();
     }
 
     public Doctor getDoctor(String doctor) {

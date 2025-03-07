@@ -30,7 +30,7 @@ public class MedicalReportService {
 
 
     public MedicalReportDTO createReport(long id, String name, MedicalReportDTO medicalReportDTO) {
-        Appointment appointment = mapper.map(appointmentService.getAppointByid(id), Appointment.class);
+        Appointment appointment = mapper.map(appointmentService.getAppointById(id), Appointment.class);
         Patient patient = mapper.map(patientService.getByName(appointment.getPatient().getName()),Patient.class);
         Doctor doctor = mapper.map(doctorService.getByName(name),Doctor.class);
         MedicalReport medicalReport = new MedicalReport();

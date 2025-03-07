@@ -43,7 +43,7 @@ public class AppointmentService {
         appointment.setDoctor(doctor);
         appointment.setBranch(branch);
         appointment.setDepartment(department);
-        appointment.setStatus(EStatus.PENDING);
+        appointment.setStatus(EStatus.CONFIRMED);
         Appointment newAppointment = appointmentRepository.save(appointment);
         return mapper.map(newAppointment,AppointmentDTO.class);
     }
@@ -53,7 +53,14 @@ public class AppointmentService {
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
         Pageable pageable = PageRequest.of(page, size, sort);
         List<EStatus> status = Arrays.asList(EStatus.PENDING,EStatus.CONFIRMED);
-        return appointmentRepository.findAllByPatientNameAndStatusIn(name,status,pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
+        return appointmentRepository.findAllByPatientName(name,pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
+    }
+    public Page<AppointmentDTO> getCurrentAppointmentsForAdmin(String name, int page, int size, String sortBy, String direction) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<EStatus> status = Arrays.asList(EStatus.PENDING,EStatus.CONFIRMED);
+        return appointmentRepository.findAll(pageable).map(appointment -> mapper.map(appointment,AppointmentDTO.class));
     }
 
     public Page<AppointmentDTO> getAppointmentHistoryForPatient(String name, int page, int size, String sortBy, String direction) {
@@ -101,9 +108,10 @@ public class AppointmentService {
     public boolean rescheduleAppointment(String name, long id, AppointmentDTO appointmentDTO) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
-            if(appointment.getPatient().getName().equals(name)) {
-                appointment.setStatus(EStatus.PENDING);
+            if(appointment.getDoctor().getName().equals(name)) {
+                appointment.setStatus(EStatus.CONFIRMED);
                 appointment.setDate(appointmentDTO.getDate());
+                appointment.setTimeSlot(appointmentDTO.getTimeSlot());
                 return true;
             }
             else
@@ -113,20 +121,7 @@ public class AppointmentService {
             return false;
     }
 
-    @Transactional
-    public boolean confirmAppointment(String name, long id) {
-        Appointment appointment = appointmentRepository.findById(id).orElse(null);
-        if(appointment!=null){
-            if(appointment.getPatient().getName().equals(name)) {
-                appointment.setStatus(EStatus.CONFIRMED);
-                return true;
-            }
-            else
-                return false;
-        }
-        else
-            return false;
-    }
+
 
     @Transactional
     public boolean noShowAppointment(String name, long id) {
@@ -158,7 +153,7 @@ public class AppointmentService {
             return false;
     }
 
-    public AppointmentDTO getAppointByid(long id) {
+    public AppointmentDTO getAppointById(long id) {
         return mapper.map(appointmentRepository.findById(id),AppointmentDTO.class);
     }
 }

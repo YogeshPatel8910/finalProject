@@ -22,7 +22,7 @@ public class JwtTokenUtil {
                 .subject(username)
                 .claims(claim)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+(30*60*1000)))
+                .expiration(new Date(System.currentTimeMillis()+(12*60*60*1000)))
                 .signWith(getSigningKey())
                 .compact();
 

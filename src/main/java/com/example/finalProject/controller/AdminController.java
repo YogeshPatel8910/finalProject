@@ -1,5 +1,6 @@
 package com.example.finalProject.controller;
 
+import com.example.finalProject.dto.AppointmentDTO;
 import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.DepartmentDTO;
 import com.example.finalProject.dto.UserDTO;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -33,6 +35,9 @@ public class AdminController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     @GetMapping()
     public ResponseEntity<Map<String,Object>> getAllUser(@RequestParam(name = "page",defaultValue = "0")int page,
@@ -102,6 +107,21 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/appointment")
+    public ResponseEntity<Map<String ,Object>> getCurrentAppointments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+                                                                      @RequestParam(name = "size",required = false,defaultValue = "10")int size,
+                                                                      @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                                                      @RequestParam(name = "direction", defaultValue = "asc") String direction,
+                                                                      Authentication authentication) {
+        Page<AppointmentDTO> appointments = appointmentService.getCurrentAppointmentsForAdmin(authentication.getName(), page, size, sortBy, direction);
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", appointments.getContent());
+        response.put("TotalElements", appointments.getTotalElements());
+        response.put("NumberOfElements", appointments.getNumberOfElements());
+        response.put("pageNumber", appointments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/branch")

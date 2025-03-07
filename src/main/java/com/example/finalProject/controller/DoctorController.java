@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/doctor/profile")
+@RequestMapping("/api/doctor")
 public class DoctorController {
 
     @Autowired
@@ -33,11 +33,22 @@ public class DoctorController {
     @Autowired
     private MedicalReportService medicalReportService;
 
-    @PutMapping("/availability")
-    public ResponseEntity<DoctorDTO> setAvailability(Authentication authentication,
+    @PutMapping("/setLeave")
+    public ResponseEntity<Set<LocalDate>> setLeave(Authentication authentication,
                                                      @RequestBody Set<LocalDate> dates) {
-        DoctorDTO doctor = doctorService.setDate(authentication.getName(), dates);
-        return new ResponseEntity<>(doctor,HttpStatus.OK);
+        Set<LocalDate> leave = doctorService.setDate(authentication.getName(), dates);
+        return new ResponseEntity<>(leave,HttpStatus.OK);
+    }
+    @PutMapping("/deleteLeave")
+    public ResponseEntity<Set<LocalDate>> deleteLeave(Authentication authentication,
+                                                   @RequestBody Set<LocalDate> dates) {
+        Set<LocalDate> leave = doctorService.deleteDate(authentication.getName(), dates);
+        return new ResponseEntity<>(leave,HttpStatus.OK);
+    }
+    @GetMapping("/leave")
+    public ResponseEntity<Set<LocalDate>> getLeave(Authentication authentication){
+        Set<LocalDate> leave = doctorService.getDate(authentication.getName());
+        return new ResponseEntity<>(leave,HttpStatus.OK);
     }
 
     @GetMapping("/appointment")
@@ -69,15 +80,6 @@ public class DoctorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/appointment/{id}/confirm")
-    public ResponseEntity<AppointmentDTO> confirmAppointment(@PathVariable(name = "id")long id,
-                                                            Authentication authentication) {
-        boolean isUpdated = appointmentService.confirmAppointment(authentication.getName(),id);
-        if(isUpdated)
-            return new ResponseEntity<>(HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
     @PutMapping("/appointment/{id}/noShow")
     public ResponseEntity<AppointmentDTO> noShowAppointment(@PathVariable(name = "id")long id,
@@ -105,6 +107,15 @@ public class DoctorController {
         return new ResponseEntity<>(medicalReport, HttpStatus.OK);
     }
 
-
+    @PutMapping("/appointment/{id}/reschedule")
+    public ResponseEntity<AppointmentDTO> rescheduleAppointment(@PathVariable(name = "id")long id,
+                                                                @RequestBody AppointmentDTO appointmentDTO,
+                                                                Authentication authentication) {
+        boolean isDeleted = appointmentService.rescheduleAppointment(authentication.getName(),id,appointmentDTO);
+        if(isDeleted)
+            return new ResponseEntity<>(HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
 }
