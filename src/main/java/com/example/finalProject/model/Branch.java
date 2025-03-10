@@ -21,9 +21,6 @@ public class Branch {
 
     private String phone;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "branch")
-    private List<Department> departments;
 
     @JsonIgnore
     @OneToMany(mappedBy = "branch")
@@ -32,4 +29,12 @@ public class Branch {
     @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private List<Appointment> appointments;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name="branch_department",
+            joinColumns = @JoinColumn(name = "branch_id"),
+            inverseJoinColumns = @JoinColumn(name = "department_id"))
+    private List<Department> department;
+
 }

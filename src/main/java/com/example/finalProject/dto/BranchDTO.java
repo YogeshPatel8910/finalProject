@@ -20,10 +20,10 @@ public class BranchDTO {
     private String phone;
 
     @JsonIgnore
-    private List<Department> departments;
+    private List<String> departmentName;
 
     @JsonIgnore
-    private List<Doctor> doctors;
+    private List<String> doctorsName;
 
     @JsonIgnore
     private List<Appointment> appointments;

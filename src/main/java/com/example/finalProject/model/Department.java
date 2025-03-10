@@ -17,9 +17,9 @@ public class Department {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "branchId")
-    private Branch branch;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "department")
+    private List<Branch> branch;
 
     @JsonIgnore
     @OneToMany(mappedBy = "department")

@@ -14,7 +14,7 @@ public class DepartmentDTO {
 
     private String name;
 
-    private String branchName;
+    private List<String> branchName;
 
     @JsonIgnore
     private List<Doctor> doctors;

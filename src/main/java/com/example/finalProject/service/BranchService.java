@@ -60,8 +60,8 @@ public class BranchService {
             return false;
     }
 
-    public BranchDTO getByName(String name) {
-        return mapper.map(branchRepository.findByName(name),BranchDTO.class);
+    public Branch getByName(String name) {
+        return branchRepository.findByName(name);
     }
 
     public Object getAll() {

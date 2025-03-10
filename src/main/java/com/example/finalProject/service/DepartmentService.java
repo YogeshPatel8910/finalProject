@@ -1,16 +1,23 @@
 package com.example.finalProject.service;
 
+import com.example.finalProject.dto.BranchDTO;
 import com.example.finalProject.dto.DepartmentDTO;
+import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.Department;
 import com.example.finalProject.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentService {
@@ -20,16 +27,39 @@ public class DepartmentService {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Autowired
+    private BranchService branchService;
+
+    @Transactional
     public  DepartmentDTO createDepartment(DepartmentDTO departmentDTO) {
-        Department department = mapper.map(departmentDTO,Department.class);
-        Department newDepartment = departmentRepository.save(department);
-        return mapper.map(newDepartment,DepartmentDTO.class);
+        List<Branch> branches = departmentDTO.getBranchName().stream()
+                .map(branchService::getByName)
+                .filter(Objects::nonNull) // Remove null branches
+                .toList();
+        if(!departmentRepository.existsByName(departmentDTO.getName())){
+            TypeMap<DepartmentDTO, Department> typeMap = mapper.typeMap(DepartmentDTO.class, Department.class);
+            typeMap.addMappings(mapping -> mapping.skip(Department::setBranch));
+            Department department = mapper.map(departmentDTO,Department.class);
+            department.setBranch(branches);
+            Department newDepartment = departmentRepository.save(department);
+//            System.out.println(newDepartment);
+            System.out.println("zazaz " +department);
+            return mapper.map(newDepartment, DepartmentDTO.class);
+        }else{
+            System.out.println("qwqw");
+            return null;
+        }
 
     }
 
     @Transactional
     public DepartmentDTO updateDepartment(long id, DepartmentDTO departmentDTO) {
         Department department = departmentRepository.findById(id).orElse(null);
+        List<Branch> branches = departmentDTO.getBranchName().stream()
+                .map(branchService::getByName)
+                .filter(Objects::nonNull) // Remove null branches
+                .map(branch -> mapper.map(branch, Branch.class))
+                .toList();
         if(department!=null){
             mapper.map(departmentDTO,department);
             return mapper.map(department,DepartmentDTO.class);
