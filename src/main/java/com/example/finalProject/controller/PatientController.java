@@ -86,8 +86,8 @@ public class PatientController {
     }
 
     @GetMapping("/data")
-    public ResponseEntity<?> getData() {
-        List<?> data = patientService.getData();
+    public ResponseEntity<Object> getData() {
+        List<Object> data = patientService.getData();
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,19 +33,16 @@ public class DepartmentService {
 
     @Transactional
     public  DepartmentDTO createDepartment(DepartmentDTO departmentDTO) {
-        List<Branch> branches = departmentDTO.getBranchName().stream()
+        Set<Branch> branches = departmentDTO.getBranchName().stream()
                 .map(branchService::getByName)
-                .filter(Objects::nonNull) // Remove null branches
-                .toList();
+                .filter(Objects::nonNull)
+                .map(branchDTO -> mapper.map(branchDTO,Branch.class))// Remove null branches
+                .collect(Collectors.toSet());
         if(!departmentRepository.existsByName(departmentDTO.getName())){
-            TypeMap<DepartmentDTO, Department> typeMap = mapper.typeMap(DepartmentDTO.class, Department.class);
-            typeMap.addMappings(mapping -> mapping.skip(Department::setBranch));
             Department department = mapper.map(departmentDTO,Department.class);
             department.setBranch(branches);
             Department newDepartment = departmentRepository.save(department);
-//            System.out.println(newDepartment);
-            System.out.println("zazaz " +department);
-            return mapper.map(newDepartment, DepartmentDTO.class);
+            return convertToDTO(newDepartment);
         }else{
             System.out.println("qwqw");
             return null;
@@ -55,14 +53,15 @@ public class DepartmentService {
     @Transactional
     public DepartmentDTO updateDepartment(long id, DepartmentDTO departmentDTO) {
         Department department = departmentRepository.findById(id).orElse(null);
-        List<Branch> branches = departmentDTO.getBranchName().stream()
+        Set<Branch> branches = departmentDTO.getBranchName().stream()
                 .map(branchService::getByName)
                 .filter(Objects::nonNull) // Remove null branches
                 .map(branch -> mapper.map(branch, Branch.class))
-                .toList();
+                .collect(Collectors.toSet());
         if(department!=null){
-            mapper.map(departmentDTO,department);
-            return mapper.map(department,DepartmentDTO.class);
+            department.getBranch().retainAll(branches);
+            department.getBranch().addAll(branches);
+            return convertToDTO(departmentRepository.save(department));
         }
         else
             return null;
@@ -82,7 +81,7 @@ public class DepartmentService {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(sortDirection, sortBy);  // Multiple fields can be added here
         Pageable pageable = PageRequest.of(page, size, sort);
-        return departmentRepository.findAll(pageable).map(department -> mapper.map(department, DepartmentDTO.class));
+        return departmentRepository.findAll(pageable).map(this::convertToDTO);
     }
 
     public DepartmentDTO getById(long id) {
@@ -95,5 +94,10 @@ public class DepartmentService {
 
     public Object getAll() {
         return departmentRepository.findAll();
+    }
+    public DepartmentDTO convertToDTO(Department department){
+        DepartmentDTO departmentDTO = mapper.map(department,DepartmentDTO.class);
+        departmentDTO.setBranchName(department.getBranch().stream().map(Branch::getName).toList());
+        return departmentDTO;
     }
 }
