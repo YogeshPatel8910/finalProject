@@ -42,19 +42,6 @@ public class AuthController {
         UserService userService = userFactory.getService(userDTO.getRoleName());
         Map<String, Object> response = new HashMap<>();
         UserDTO newUser = userService.registerUser(userDTO);
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDTO.getName(),userDTO.getPassword());
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Optional<String> role = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst();
-        if (role.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "User has no assigned role"));
-        }
-        String token = authService.generateToken(userDetails.getUsername(),role.get());
-        response.put("token", token);
-        response.put("role", role.get().toLowerCase().substring(5) );
         response.put("user", newUser);
         System.out.println(response);
         return new ResponseEntity<>(response,HttpStatus.CREATED);

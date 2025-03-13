@@ -22,8 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@Service
-@Qualifier("adminService")
+@Service("adminService")
 public  class AdminService implements UserService{
 
     ModelMapper mapper = new ModelMapper();

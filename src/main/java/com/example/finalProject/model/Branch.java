@@ -35,7 +35,7 @@ public class Branch {
     @ToString.Exclude
     private List<Appointment> appointments;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="branch_department",
             joinColumns = @JoinColumn(name = "branch_id"),

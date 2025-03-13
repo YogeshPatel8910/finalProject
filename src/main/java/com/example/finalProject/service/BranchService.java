@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BranchService {
 
@@ -64,7 +66,7 @@ public class BranchService {
         return mapper.map(branchRepository.findByName(name),BranchDTO.class);
     }
 
-    public Object getAll() {
+    public List<Branch> getAll() {
         return branchRepository.findAll();
     }
 }

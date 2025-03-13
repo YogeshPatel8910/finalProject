@@ -2,6 +2,7 @@ package com.example.finalProject.service;
 
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
+import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.ERole;
 import com.example.finalProject.model.Patient;
 import com.example.finalProject.repository.PatientRepository;
@@ -100,11 +101,7 @@ public class PatientService implements UserService{
             return false;
     }
 
-    public List<Object> getData() {
-        List<Object> data = new ArrayList<>();
-        data.add(doctorService.getAllDoctor());
-        data.add(branchService.getAll());
-        data.add(departmentService.getAll());
-        return data;
+    public List<Branch> getData() {
+        return branchService.getAll();
     }
 }

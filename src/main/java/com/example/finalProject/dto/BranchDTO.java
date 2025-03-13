@@ -19,7 +19,7 @@ public class BranchDTO {
 
     private String phone;
 
-    @JsonIgnore
+//    @JsonIgnore
     private List<String> departmentName;
 
     @JsonIgnore

@@ -21,14 +21,14 @@ public class Department {
     private String name;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-//    @JsonIgnore
+    @JsonIgnore
     @JoinTable(name="branch_department",
             joinColumns = @JoinColumn(name = "department_id"),
             inverseJoinColumns = @JoinColumn(name = "branch_id"))
     @ToString.Exclude
     private Set<Branch> branch;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "department")
     @ToString.Exclude
     private List<Doctor> doctors;

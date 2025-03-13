@@ -19,12 +19,13 @@ public class Doctor extends User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "branchId")
     @ToString.Exclude
     private Branch branch;
 
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "departmentId")
     @ToString.Exclude

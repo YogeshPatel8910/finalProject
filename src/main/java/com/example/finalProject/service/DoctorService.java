@@ -4,9 +4,8 @@ import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.model.ERole;
-import com.example.finalProject.repository.DoctorRepository;
-import com.example.finalProject.repository.RoleRepository;
-import com.example.finalProject.repository.UserRepository;
+import com.example.finalProject.repository.*;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,12 @@ public class DoctorService implements UserService{
     private UserRepository userRepository;
 
     @Autowired
+    private BranchRepository branchRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Override
@@ -47,6 +54,8 @@ public class DoctorService implements UserService{
         Doctor doctor = mapper.map(doctorDTO,Doctor.class);
         doctor.setRole(roleRepository.findByName(ERole.ROLE_DOCTOR));
         doctor.setPassword(passwordEncoder.encode(doctorDTO.getPassword()));
+        doctor.setBranch(branchRepository.findByName(doctorDTO.getBranchName()));
+        doctor.setDepartment(departmentRepository.findByName(doctorDTO.getDepartmentName()));
         doctor.setCreatedAt(LocalDateTime.now());
         Doctor newUser = doctorRepository.save(doctor);
         return mapper.map(newUser,DoctorDTO.class);
@@ -92,7 +101,10 @@ public class DoctorService implements UserService{
     @Transactional
     public Set<LocalDate> setDate(String user,Set<LocalDate> dates) {
         Doctor doctor = doctorRepository.findByName(user);
-        doctor.getAvailableDays().addAll(dates);
+        if(doctor.getAvailableDays()==null)
+            doctor.setAvailableDays(dates);
+        else
+            doctor.getAvailableDays().addAll(dates);
         doctorRepository.save(doctor);
         return doctor.getAvailableDays();
     }
@@ -105,6 +117,9 @@ public class DoctorService implements UserService{
     }
     public Set<LocalDate> getDate(String user) {
         Doctor doctor = doctorRepository.findByName(user);
+        if(doctor.getAvailableDays()==null){
+            return Collections.emptySet();
+        }
         return doctor.getAvailableDays();
     }
 

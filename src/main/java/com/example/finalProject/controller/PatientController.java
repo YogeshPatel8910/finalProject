@@ -2,6 +2,7 @@ package com.example.finalProject.controller;
 
 import com.example.finalProject.dto.AppointmentDTO;
 import com.example.finalProject.dto.UserDTO;
+import com.example.finalProject.model.Branch;
 import com.example.finalProject.service.AppointmentService;
 import com.example.finalProject.service.PatientService;
 import jakarta.transaction.Transactional;
@@ -87,7 +88,7 @@ public class PatientController {
 
     @GetMapping("/data")
     public ResponseEntity<Object> getData() {
-        List<Object> data = patientService.getData();
+        List<Branch> data = patientService.getData();
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }
