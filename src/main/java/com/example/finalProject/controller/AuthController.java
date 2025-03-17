@@ -3,6 +3,7 @@ package com.example.finalProject.controller;
 import com.example.finalProject.dto.LoginDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.service.AuthService;
+import com.example.finalProject.service.MailService;
 import com.example.finalProject.service.UserFactory;
 import com.example.finalProject.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,9 @@ public class AuthController {
     @Autowired
     private UserFactory userFactory;
 
+    @Autowired
+    private MailService mailService;
+
 
 
     @PostMapping("/register")
@@ -65,6 +69,7 @@ public class AuthController {
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             response.put("role", role.get().toLowerCase().substring(5) );
+            mailService.sendSimpleMessage("210305105593@paruluniversity.ac.in","Test","Login Successfully for "+userDetails.getUsername());
             return ResponseEntity.ok(response);
         }
         catch (BadCredentialsException e) {

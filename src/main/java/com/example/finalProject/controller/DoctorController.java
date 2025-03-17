@@ -3,9 +3,9 @@ package com.example.finalProject.controller;
 import com.example.finalProject.dto.AppointmentDTO;
 import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.MedicalReportDTO;
-import com.example.finalProject.service.AppointmentService;
-import com.example.finalProject.service.DoctorService;
-import com.example.finalProject.service.MedicalReportService;
+import com.example.finalProject.model.User;
+import com.example.finalProject.repository.UserRepository;
+import com.example.finalProject.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +32,12 @@ public class DoctorController {
 
     @Autowired
     private MedicalReportService medicalReportService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MailService mailService;
 
     @PutMapping("/setLeave")
     public ResponseEntity<Set<LocalDate>> setLeave(Authentication authentication,
@@ -85,8 +91,10 @@ public class DoctorController {
     public ResponseEntity<AppointmentDTO> noShowAppointment(@PathVariable(name = "id")long id,
                                                              Authentication authentication) {
         boolean noShow = appointmentService.noShowAppointment(authentication.getName(),id);
-        if(noShow)
+        if(noShow){
+
             return new ResponseEntity<>(HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -100,6 +108,7 @@ public class DoctorController {
         if(medicalReport != null){
             boolean isCompleted = appointmentService.completeAppointment(authentication.getName(),id);
             if(isCompleted){
+
                 return new ResponseEntity<>(medicalReport,HttpStatus.OK);
             }
 //          deleteMedicalReport
@@ -112,8 +121,10 @@ public class DoctorController {
                                                                 @RequestBody AppointmentDTO appointmentDTO,
                                                                 Authentication authentication) {
         boolean isDeleted = appointmentService.rescheduleAppointment(authentication.getName(),id,appointmentDTO);
-        if(isDeleted)
+        if(isDeleted){
+
             return new ResponseEntity<>(HttpStatus.OK);
+        }
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

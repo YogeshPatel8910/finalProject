@@ -49,10 +49,13 @@ public class  DataController {
         Map<String,Map<String, List<String>>> response = data.stream()
                 .collect(Collectors.toMap(
                         Branch::getName,
-                        hospital -> hospital.getDepartment().stream()
+                        branch -> branch.getDepartment().stream()
                                 .collect(Collectors.toMap(
                                         Department::getName,
-                                        doctors -> hospital.getDoctors().stream()
+                                        doctors -> doctors.getDoctors()
+                                                .stream()
+                                                .filter(doctor ->
+                                                        doctor.getBranch().getName().equals(branch.getName()))
                                                 .map(Doctor::getName)
                                                 .collect(Collectors.toList())
                                 ))
@@ -60,7 +63,7 @@ public class  DataController {
                 ));
         DataDTO dataDTO = new DataDTO();
         dataDTO.setData(response);
-        return new ResponseEntity<>(dataDTO.getData()     , HttpStatus.OK);
+        return new ResponseEntity<>(dataDTO.getData(), HttpStatus.OK);
     }
     @GetMapping("/leave/{name}")
     public ResponseEntity<Set<LocalDate>> getLeave(@PathVariable(name = "name")String name){
