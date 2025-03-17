@@ -91,7 +91,7 @@ public class DoctorController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/appointment/{id}")
+    @PostMapping("/appointment/{id}/report")
     public ResponseEntity<MedicalReportDTO> createReport(@PathVariable(name = "id")long id,
                                                          @RequestBody MedicalReportDTO medicalReportDTO,
                                                          Authentication authentication) {
@@ -117,5 +117,16 @@ public class DoctorController {
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+//    @PostMapping("/appointment/{id}/report")
+//    public ResponseEntity<AppointmentDTO> addReport(@PathVariable(name = "id")long id,
+//                                                                @RequestBody MedicalReportDTO medicalReportDTO,
+//                                                                Authentication authentication) {
+//        boolean isDeleted = appointmentService.rescheduleAppointment(authentication.getName(),id,medicalReportDTO);
+//        if(isDeleted)
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        else
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
 }

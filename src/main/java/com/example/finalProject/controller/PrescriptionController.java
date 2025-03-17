@@ -46,10 +46,10 @@ public class PrescriptionController {
         return new ResponseEntity<>(prescription, HttpStatus.OK);
     }
 
-    @PostMapping()
-    public ResponseEntity<PrescriptionDTO> createPrescription(@RequestBody PrescriptionDTO prescriptionDTO){
-        return new ResponseEntity<>(prescriptionService.createPrescription(prescriptionDTO),HttpStatus.OK);
-    }
+//    @PostMapping()
+//    public ResponseEntity<PrescriptionDTO> createPrescription(@RequestBody PrescriptionDTO prescriptionDTO){
+//        return new ResponseEntity<>(prescriptionService.createPrescription(prescriptionDTO),HttpStatus.OK);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<PrescriptionDTO> updatePrescription(@PathVariable(name = "id")long id,

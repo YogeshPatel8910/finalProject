@@ -25,6 +25,6 @@ public class MedicalReportDTO {
 
     private String notes;
 
-    private List<Prescription> prescriptions;
+    private List<PrescriptionDTO> prescriptions;
 
 }

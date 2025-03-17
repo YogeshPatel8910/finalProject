@@ -142,7 +142,7 @@ public class AppointmentService {
     public boolean completeAppointment(String name, long id) {
         Appointment appointment = appointmentRepository.findById(id).orElse(null);
         if(appointment!=null){
-            if(appointment.getPatient().getName().equals(name)) {
+            if(appointment.getDoctor().getName().equals(name)) {
                 appointment.setStatus(EStatus.COMPLETED);
                 return true;
             }

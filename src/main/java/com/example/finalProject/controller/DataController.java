@@ -4,16 +4,18 @@ import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.Department;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.response.DataDTO;
+import com.example.finalProject.service.DoctorService;
 import com.example.finalProject.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,6 +24,9 @@ public class  DataController {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private DoctorService doctorService;
 
     @GetMapping("/register")
     public ResponseEntity<Object> getRegisterData() {
@@ -56,5 +61,10 @@ public class  DataController {
         DataDTO dataDTO = new DataDTO();
         dataDTO.setData(response);
         return new ResponseEntity<>(dataDTO.getData()     , HttpStatus.OK);
+    }
+    @GetMapping("/leave/{name}")
+    public ResponseEntity<Set<LocalDate>> getLeave(@PathVariable(name = "name")String name){
+        Set<LocalDate> leave = doctorService.getDate(name);
+        return new ResponseEntity<>(leave,HttpStatus.OK);
     }
 }

@@ -36,7 +36,7 @@ public class Branch {
     private List<Appointment> appointments;
 
 //    @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name="branch_department",
             joinColumns = @JoinColumn(name = "branch_id"),
             inverseJoinColumns = @JoinColumn(name = "department_id"))

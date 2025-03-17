@@ -37,7 +37,8 @@ public class MedicalReport {
 
     private String notes;
 
-    @OneToMany(mappedBy = "medicalReport")
+
+    @OneToMany(mappedBy = "medicalReport",cascade = CascadeType.PERSIST)
     private List<Prescription> prescriptions;
 
 //    @CreationTimestamp

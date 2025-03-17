@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PrescriptionService {
 
@@ -36,10 +38,10 @@ public class PrescriptionService {
         return prescriptionRepository.findAll(pageable).map(prescription -> mapper.map(prescription, PrescriptionDTO.class));
     }
 
-    public PrescriptionDTO createPrescription(PrescriptionDTO prescriptionDTO) {
-        Prescription prescription = mapper.map(prescriptionDTO,Prescription.class);
-        Prescription newPrescription = prescriptionRepository.save(prescription);
-        return mapper.map(newPrescription, PrescriptionDTO.class);
+    public List<PrescriptionDTO> createPrescriptions(List<PrescriptionDTO> prescriptionDTO) {
+        List<Prescription> prescriptions = prescriptionDTO.stream().map(prescription->mapper.map(prescription,Prescription.class)).toList();
+        List<Prescription> newPrescription = prescriptionRepository.saveAll(prescriptions);
+        return newPrescription.stream().map(prescription -> mapper.map(prescription,PrescriptionDTO.class)).toList();
     }
 
     public PrescriptionDTO updatePrescription(long id, PrescriptionDTO prescriptionDTO) {
