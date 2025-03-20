@@ -14,8 +14,7 @@ public class Prescription {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "medicalReportId")
+    @ManyToOne(cascade = CascadeType.ALL)
     private MedicalReport medicalReport;
 
     private String name;

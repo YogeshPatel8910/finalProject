@@ -47,7 +47,9 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         UserDTO newUser = userService.registerUser(userDTO);
         response.put("user", newUser);
-        System.out.println(response);
+        String subject = "Welcome to Our Platform!";
+        String body = "Dear " + newUser.getName() + ",\n\nYour account has been successfully registered.\n\nBest Regards,\nTeam";
+        mailService.sendSimpleMessage(newUser.getEmail(), subject, body);
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
@@ -69,7 +71,6 @@ public class AuthController {
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             response.put("role", role.get().toLowerCase().substring(5) );
-            mailService.sendSimpleMessage("210305105593@paruluniversity.ac.in","Test","Login Successfully for "+userDetails.getUsername());
             return ResponseEntity.ok(response);
         }
         catch (BadCredentialsException e) {

@@ -3,6 +3,7 @@ package com.example.finalProject.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class MedicalReport {
     @OneToOne
     @MapsId
     @JoinColumn(name = "appointmentId")
+    @ToString.Exclude
     private Appointment appointment;
 
     private String symptom;
@@ -38,7 +40,8 @@ public class MedicalReport {
     private String notes;
 
 
-    @OneToMany(mappedBy = "medicalReport",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "medicalReport", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Prescription> prescriptions;
 
 //    @CreationTimestamp
