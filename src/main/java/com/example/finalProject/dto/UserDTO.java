@@ -1,13 +1,12 @@
 package com.example.finalProject.dto;
 
+import com.example.finalProject.model.Activity;
 import com.example.finalProject.model.ERole;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.OptBoolean;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -39,4 +38,6 @@ public class UserDTO {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private List<Activity> activities;
 }

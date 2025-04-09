@@ -2,6 +2,7 @@ package com.example.finalProject.service;
 
 import com.example.finalProject.dto.AppointmentDTO;
 import com.example.finalProject.model.*;
+import com.example.finalProject.repository.ActivityRepsoitory;
 import com.example.finalProject.repository.AppointmentRepository;
 import com.example.finalProject.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,9 +34,11 @@ public class AppointmentService {
     @Autowired
     private DepartmentService departmentService;
     @Autowired
-            private UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-            MailService mailService;
+    private MailService mailService;
+    @Autowired
+    private ActivityRepsoitory activityRepsoitory;
 
     ModelMapper mapper = new ModelMapper();
 
@@ -65,11 +69,18 @@ public class AppointmentService {
                 "Dear Dr. %s,\n\nYou have a new appointment scheduled with %s on %s.\n\nBest Regards,\nHealthcare Team",
                 appointment.getDoctor().getName(), appointment.getPatient().getName(), appointment.getDate().toString()
         );
-
+        System.out.println("patient method");
         // Send email notifications
         mailService.sendSimpleMessage(patientEmail, "Appointment Confirmation", patientMessage);
         mailService.sendSimpleMessage(doctorEmail, "New Appointment Scheduled", doctorMessage);
 
+        Activity activity = new Activity();
+        activity.setAction("Appointment Confirmed");
+        activity.setStatus("Scheduled");
+        activity.setName(doctor.getName());
+        activity.setUser(userRepository.findByName(patient.getName()).orElse(null));
+        activity.setTime(LocalDateTime.now());
+        activityRepsoitory.save(activity);
         return mapper.map(newAppointment,AppointmentDTO.class);
     }
 
@@ -138,7 +149,13 @@ public class AppointmentService {
                 // Send email notifications
                 mailService.sendSimpleMessage(patientEmail, "Appointment Cancellation Notice", patientMessage);
                 mailService.sendSimpleMessage(doctorEmail, "Appointment Canceled", doctorMessage);
-
+                Activity activity = new Activity();
+                activity.setAction("Appointment Canceled");
+                activity.setStatus("Canceled");
+                activity.setName(appointment.getDoctor().getName());
+                activity.setUser(userRepository.findByName(appointment.getPatient().getName()).orElse(null));
+                activity.setTime(LocalDateTime.now());
+                activityRepsoitory.save(activity);
                 return true;
             }
             else
@@ -170,7 +187,16 @@ public class AppointmentService {
 
                 mailService.sendSimpleMessage(patientEmail, "Appointment Rescheduled", patientMessage);
                 mailService.sendSimpleMessage(doctorEmail, "Appointment Reschedule Notification", doctorMessage);
-
+                Activity activity = new Activity();
+                activity.setAction("Appointment Rescheduled");
+                activity.setStatus("Rescheduled");
+                activity.setName(appointment.getDoctor().getName());
+                if(appointment.getDoctor().getName().equals(name))
+                    activity.setUser(userRepository.findByName(appointment.getDoctor().getName()).orElse(null));
+                else
+                    activity.setUser(userRepository.findByName(appointment.getPatient().getName()).orElse(null));
+                activity.setTime(LocalDateTime.now());
+                activityRepsoitory.save(activity);
                 return true;
             }
             else

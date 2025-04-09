@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>23</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -63,12 +63,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.7.5</version>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>9.1.0</version>
 		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
 		<dependency>
@@ -104,8 +105,42 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.2</version>
 		</dependency>
-
-
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>3.4.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.itextpdf/itext-core -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-core</artifactId>
+			<version>9.1.0</version>
+			<type>pom</type>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.ai/spring-ai-vertex-ai-gemini-spring-boot-starter -->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.ai</groupId>-->
+<!--			<artifactId>spring-ai-vertex-ai-gemini-spring-boot-starter</artifactId>-->
+<!--			<version>1.0.0-M6</version>-->
+<!--		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vertexai -->
+<!--		<dependency>-->
+<!--			<groupId>com.google.cloud</groupId>-->
+<!--			<artifactId>google-cloud-vertexai</artifactId>-->
+<!--			<version>1.20.0</version>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>com.google.genai</groupId>
+			<artifactId>google-genai</artifactId>
+			<version>0.2.0</version>
+		</dependency>
 
 	</dependencies>
 

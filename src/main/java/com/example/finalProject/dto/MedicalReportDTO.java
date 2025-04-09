@@ -6,6 +6,7 @@ import com.example.finalProject.model.Patient;
 import com.example.finalProject.model.Prescription;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -26,5 +27,9 @@ public class MedicalReportDTO {
     private String notes;
 
     private List<PrescriptionDTO> prescriptions;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
 }

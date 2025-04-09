@@ -1,9 +1,11 @@
 package com.example.finalProject.controller;
 
 import com.example.finalProject.dto.AppointmentDTO;
+import com.example.finalProject.dto.MedicalReportDTO;
 import com.example.finalProject.dto.UserDTO;
 import com.example.finalProject.model.Branch;
 import com.example.finalProject.service.AppointmentService;
+import com.example.finalProject.service.MedicalReportService;
 import com.example.finalProject.service.PatientService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,24 @@ public class PatientController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private MedicalReportService medicalReportService;
+
+    @GetMapping("/medicalReport")
+    public ResponseEntity<Map<String,Object>> getMedicalReport(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+                                                                     @RequestParam(name = "size",required = false,defaultValue = "10")int size,
+                                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                                                     @RequestParam(name = "direction", defaultValue = "asc") String direction,
+                                                                     Authentication authentication){
+        Page<MedicalReportDTO> appointments = medicalReportService.getMedicalReports(authentication.getName(),page,size,sortBy,direction,"patient");
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",appointments.getContent());
+        response.put("TotalElements",appointments.getTotalElements());
+        response.put("NumberOfElements",appointments.getNumberOfElements());
+        response.put("pageNumber",appointments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/appointment")
     public ResponseEntity<Map<String,Object>> getCurrentAppointments(@RequestParam(name = "page",required = false,defaultValue = "0")int page,

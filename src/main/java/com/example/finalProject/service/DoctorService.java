@@ -2,6 +2,7 @@ package com.example.finalProject.service;
 
 import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.UserDTO;
+import com.example.finalProject.model.Activity;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.model.ERole;
 import com.example.finalProject.repository.*;
@@ -47,6 +48,9 @@ public class DoctorService implements UserService{
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ActivityRepsoitory activityRepsoitory;
+
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     public DoctorDTO registerUser(UserDTO userDTO) {
@@ -58,6 +62,13 @@ public class DoctorService implements UserService{
         doctor.setDepartment(departmentRepository.findByName(doctorDTO.getDepartmentName()));
         doctor.setCreatedAt(LocalDateTime.now());
         Doctor newUser = doctorRepository.save(doctor);
+        Activity activity = new Activity();
+        activity.setAction("New Doctor Registration");
+        activity.setStatus("Complete");
+        activity.setName(newUser.getName());
+        activity.setUser(userRepository.findByName("admin").orElse(null));
+        activity.setTime(LocalDateTime.now());
+        activityRepsoitory.save(activity);
         return mapper.map(newUser,DoctorDTO.class);
     }
 

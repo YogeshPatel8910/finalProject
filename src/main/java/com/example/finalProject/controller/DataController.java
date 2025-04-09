@@ -1,8 +1,7 @@
 package com.example.finalProject.controller;
 
-import com.example.finalProject.model.Branch;
-import com.example.finalProject.model.Department;
-import com.example.finalProject.model.Doctor;
+import com.example.finalProject.model.*;
+import com.example.finalProject.repository.UserRepository;
 import com.example.finalProject.response.DataDTO;
 import com.example.finalProject.service.DoctorService;
 import com.example.finalProject.service.PatientService;
@@ -13,6 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +30,9 @@ public class  DataController {
     @Autowired
     private DoctorService doctorService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/register")
     public ResponseEntity<Object> getRegisterData() {
         List<Branch> data = patientService.getData();
@@ -39,31 +44,42 @@ public class  DataController {
                                 .collect(Collectors.toList())
 
                 ));
-        DataDTO dataDTO = new DataDTO();
-        dataDTO.setData(response);
-        return new ResponseEntity<>(dataDTO.getData()   , HttpStatus.OK);
+        return new ResponseEntity<>(response   , HttpStatus.OK);
     }
     @GetMapping("/appointment")
     public ResponseEntity<Object> getAppointmentData() {
         List<Branch> data = patientService.getData();
-        Map<String,Map<String, List<String>>> response = data.stream()
+        Map<String, Map<String, Map<String, Map<LocalDate, List<LocalTime>>>>> response = data.stream()
                 .collect(Collectors.toMap(
-                        Branch::getName,
-                        branch -> branch.getDepartment().stream()
-                                .collect(Collectors.toMap(
-                                        Department::getName,
-                                        doctors -> doctors.getDoctors()
-                                                .stream()
-                                                .filter(doctor ->
-                                                        doctor.getBranch().getName().equals(branch.getName()))
-                                                .map(Doctor::getName)
-                                                .collect(Collectors.toList())
+                        Branch::getName,  // Branch Name as Key
+                        branch -> branch.getDepartment().stream().collect(Collectors.toMap(
+                                Department::getName,  // Department Name as Key
+                                department -> department.getDoctors().stream().collect(Collectors.toMap(
+                                        Doctor::getName,  // Doctor Name as Key
+                                        doctor -> doctor.getAppointment().stream()
+                                                .collect(Collectors.groupingBy(
+                                                        Appointment::getDate,  // Group by Date
+                                                        Collectors.mapping(
+                                                                Appointment::getTimeSlot, // Collect Time Slots for the date
+                                                                Collectors.toList()
+                                                        )
+                                                ))
                                 ))
-
+                        ))
                 ));
-        DataDTO dataDTO = new DataDTO();
-        dataDTO.setData(response);
-        return new ResponseEntity<>(dataDTO.getData(), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/dashboard")
+    public ResponseEntity<Map<String,Integer>> getDashboardData() {
+        List<User> data = userRepository.findAll();
+        Map<String, Integer> response = new HashMap<>();
+        response.put("patient", (int) data.stream().filter(user->user instanceof Patient).count());
+        response.put("doctor", (int) data.stream().filter(user -> user instanceof Doctor).count());
+        response.put("appointment",(int) data.stream()
+                .filter(user -> user instanceof Doctor)
+                .mapToLong(doc -> ((Doctor) doc).getAppointment().stream()
+                        .filter(appointment -> appointment.getDate().equals(LocalDate.now())).count()).sum());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/leave/{name}")
     public ResponseEntity<Set<LocalDate>> getLeave(@PathVariable(name = "name")String name){

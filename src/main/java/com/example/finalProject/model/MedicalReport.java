@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -44,10 +47,10 @@ public class MedicalReport {
     @ToString.Exclude
     private List<Prescription> prescriptions;
 
-//    @CreationTimestamp
-//    private LocalDateTime createdAt;
-//
-//    @UpdateTimestamp
-//    private LocalDateTime updatedAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

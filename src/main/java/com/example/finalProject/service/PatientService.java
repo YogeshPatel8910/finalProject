@@ -2,9 +2,8 @@ package com.example.finalProject.service;
 
 import com.example.finalProject.dto.PatientDTO;
 import com.example.finalProject.dto.UserDTO;
-import com.example.finalProject.model.Branch;
-import com.example.finalProject.model.ERole;
-import com.example.finalProject.model.Patient;
+import com.example.finalProject.model.*;
+import com.example.finalProject.repository.ActivityRepsoitory;
 import com.example.finalProject.repository.PatientRepository;
 import com.example.finalProject.repository.RoleRepository;
 import com.example.finalProject.repository.UserRepository;
@@ -49,6 +48,9 @@ public class PatientService implements UserService{
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private ActivityRepsoitory activityRepsoitory;
+
     @Override
     public UserDTO registerUser(UserDTO userDTO) {
         PatientDTO patientDTO = (PatientDTO) userDTO;
@@ -57,6 +59,13 @@ public class PatientService implements UserService{
         patient.setPassword(passwordEncoder.encode(patientDTO.getPassword()));
         patient.setCreatedAt(LocalDateTime.now());
         Patient newUser = patientRepository.save(patient);
+        Activity activity = new Activity();
+        activity.setAction("New Patient Registration");
+        activity.setStatus("Complete");
+        activity.setName(newUser.getName());
+        activity.setUser(userRepository.findByName("admin").orElse(null));
+        activity.setTime(LocalDateTime.now());
+        activityRepsoitory.save(activity);
         return mapper.map(newUser,PatientDTO.class);
     }
 

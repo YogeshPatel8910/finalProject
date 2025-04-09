@@ -128,6 +128,20 @@ public class DoctorController {
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    @GetMapping("/medicalReport")
+    public ResponseEntity<Map<String,Object>> getMedicalReport(@RequestParam(name = "page",required = false,defaultValue = "0")int page,
+                                                               @RequestParam(name = "size",required = false,defaultValue = "10")int size,
+                                                               @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                                                               @RequestParam(name = "direction", defaultValue = "asc") String direction,
+                                                               Authentication authentication){
+        Page<MedicalReportDTO> appointments = medicalReportService.getMedicalReports(authentication.getName(),page,size,sortBy,direction, "doctor");
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",appointments.getContent());
+        response.put("TotalElements",appointments.getTotalElements());
+        response.put("NumberOfElements",appointments.getNumberOfElements());
+        response.put("pageNumber",appointments.getNumber());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 //    @PostMapping("/appointment/{id}/report")
 //    public ResponseEntity<AppointmentDTO> addReport(@PathVariable(name = "id")long id,
