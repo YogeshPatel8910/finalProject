@@ -2,7 +2,6 @@ package com.example.finalProject.controller;
 
 import com.example.finalProject.model.*;
 import com.example.finalProject.repository.UserRepository;
-import com.example.finalProject.response.DataDTO;
 import com.example.finalProject.service.DoctorService;
 import com.example.finalProject.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
