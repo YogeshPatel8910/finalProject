@@ -2,7 +2,6 @@ package com.example.finalProject.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 

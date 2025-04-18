@@ -1,11 +1,8 @@
 package com.example.finalProject.dto;
 
 import com.example.finalProject.model.Appointment;
-import com.example.finalProject.model.Branch;
-import com.example.finalProject.model.Department;
 import lombok.Data;
 
-import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import java.time.LocalDate;
 import java.util.List;
 

@@ -2,7 +2,10 @@ package com.example.finalProject.dto;
 
 import com.example.finalProject.model.Activity;
 import com.example.finalProject.model.ERole;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.Data;
 
 import java.time.LocalDateTime;

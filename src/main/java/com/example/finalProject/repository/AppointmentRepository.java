@@ -2,7 +2,6 @@ package com.example.finalProject.repository;
 
 import com.example.finalProject.model.Appointment;
 import com.example.finalProject.model.EStatus;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

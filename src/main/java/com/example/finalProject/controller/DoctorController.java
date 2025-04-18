@@ -1,12 +1,12 @@
 package com.example.finalProject.controller;
 
 import com.example.finalProject.dto.AppointmentDTO;
-import com.example.finalProject.dto.DoctorDTO;
 import com.example.finalProject.dto.MedicalReportDTO;
-import com.example.finalProject.model.User;
 import com.example.finalProject.repository.UserRepository;
-import com.example.finalProject.service.*;
-import jakarta.transaction.Transactional;
+import com.example.finalProject.service.AppointmentService;
+import com.example.finalProject.service.DoctorService;
+import com.example.finalProject.service.MailService;
+import com.example.finalProject.service.MedicalReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

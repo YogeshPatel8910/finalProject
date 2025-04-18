@@ -6,24 +6,26 @@ import com.example.finalProject.model.Branch;
 import com.example.finalProject.model.Department;
 import com.example.finalProject.model.Doctor;
 import com.example.finalProject.repository.BranchRepository;
-import com.example.finalProject.repository.DepartmentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.Part;
+import org.apache.http.HttpException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.genai.types.Part;
-import org.apache.http.HttpException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
+/**
+ * Service responsible for generating AI responses using Google's Gemini API
+ * Helps users find appropriate doctors based on their symptoms
+ */
 @Service
 public class GenerateContentWithTextInput {
 
@@ -33,16 +35,25 @@ public class GenerateContentWithTextInput {
   @Value("${api.key}")
   private String apiKey;
 
+  /**
+   * Processes user input and generates an AI response with doctor recommendations
+   * @param text The user's input text describing symptoms
+   * @return AIResponse object containing doctor recommendation
+   * @throws IOException If there's an error in API communication
+   * @throws HttpException If there's an HTTP error in the request
+   */
   public AIResponse getResponse(String text) throws IOException, HttpException {
-    // Instantiate the client. The client by default uses the Gemini API. It gets
-    // the API key from the environment variable `GOOGLE_API_KEY`.
-//    Client client = new Client();
+    // Instantiate the client with API key
     Client client = Client
             .builder()
             .apiKey(apiKey)
             .build();
 
+    // Fetch all branch data from the repository
     List<Branch> data = branchRepository.findAll();
+
+    // Transform the data into a nested map structure for easier processing
+    // Format: Branch Name -> Department Name -> Doctor Name -> Specialization
     Map<String, Map<String, Map<String, String>>> resp = data.stream()
             .collect(Collectors.toMap(
                     Branch::getName,
@@ -51,12 +62,11 @@ public class GenerateContentWithTextInput {
                                     Department::getName,
                                     department -> department.getDoctors().stream()
                                             .collect(Collectors.toMap(
-                                            Doctor::getName,Doctor::getSpecialization))
-                                    ))
-                    ));
+                                                    Doctor::getName,Doctor::getSpecialization))
+                            ))
+            ));
 
-    System.out.println("12345: "+resp.toString());
-
+    // Build system instruction for the AI model
     Content systemInstruction =
             Content.builder()
                     .parts(ImmutableList.of(
@@ -104,7 +114,7 @@ public class GenerateContentWithTextInput {
                                             "  \"message\": \"It seems like you might need to visit **[Department Name]** at **[Branch Name]**. " +
                                             "Dr. **[Doctor Name]**, an expert in **[Doctor Specialty]**, can assist you. " +
                                             "Possible causes include **[Possible Cause 1]** or **[Possible Cause 2]**. " +
-                                            "It’s always a good idea to get checked out early! 😊\",\n" +
+                                            "It's always a good idea to get checked out early! 😊\",\n" +
                                             "  \"data\": {\n" +
                                             "    \"doctorName\": \"[Doctor Name]\",\n" +
                                             "    \"departmentName\": \"[Department Name]\",\n" +
@@ -157,7 +167,7 @@ public class GenerateContentWithTextInput {
 
                                             "### **📝 Message Formatting Guidelines:**\n" +
                                             "* **Greeting/Opening (optional)** → e.g., 'Based on your symptoms...', 'It sounds like...', etc.\n" +
-                                            "* **Recommendation** → Suggests the department and why it’s needed.\n" +
+                                            "* **Recommendation** → Suggests the department and why it's needed.\n" +
                                             "* **Doctor Information** → Mentions the available doctor and their specialty.\n" +
                                             "* **Potential Causes/Next Steps** → Provide one or two possible causes **only if they can be reasonably inferred**. If symptoms are too vague, omit this.\n" +
                                             "* **Tone Adaptation** → Adjust the tone based on the severity of symptoms.\n\n" +
@@ -172,22 +182,22 @@ public class GenerateContentWithTextInput {
                     ))
                     .build();
 
-
-
-
-
-
-
-
+    // Configure the API request
     GenerateContentConfig config =
             GenerateContentConfig.builder()
                     .maxOutputTokens(1024)
                     .systemInstruction(systemInstruction)
                     .build();
+
+    // Send the request to Gemini API
     GenerateContentResponse response =
-        client.models.generateContent("gemini-2.0-flash-001", text, config);
-    // Gets the text string from the response by the quick accessor method `text()`.
+            client.models.generateContent("gemini-2.0-flash-001", text, config);
+
+    // Log the response for debugging
     System.out.println("Unary response: " + response.text());
+
+    // Parse the JSON response into an AIResponse object
+    // Note: Substring is used to remove JSON code fences that might be in the response
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.readValue(response.text().substring(7,response.text().length()-3), AIResponse.class);
   }
