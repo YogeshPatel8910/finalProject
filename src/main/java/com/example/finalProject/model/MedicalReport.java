@@ -3,7 +3,11 @@ package com.example.finalProject.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -29,6 +33,7 @@ public class MedicalReport {
     @OneToOne
     @MapsId
     @JoinColumn(name = "appointmentId")
+    @ToString.Exclude
     private Appointment appointment;
 
     private String symptom;
@@ -37,13 +42,15 @@ public class MedicalReport {
 
     private String notes;
 
-    @OneToMany(mappedBy = "medicalReport")
+
+    @OneToMany(mappedBy = "medicalReport", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Prescription> prescriptions;
 
-//    @CreationTimestamp
-//    private LocalDateTime createdAt;
-//
-//    @UpdateTimestamp
-//    private LocalDateTime updatedAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

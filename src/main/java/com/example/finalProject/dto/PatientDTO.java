@@ -2,13 +2,12 @@ package com.example.finalProject.dto;
 
 import com.example.finalProject.model.Appointment;
 import com.example.finalProject.model.MedicalReport;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class PatientDTO {
+public class PatientDTO extends  UserDTO{
 
     private Long id;
 

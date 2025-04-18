@@ -2,8 +2,8 @@ package com.example.finalProject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -25,10 +25,12 @@ public class Patient extends User{
 
     @JsonIgnore
     @OneToMany(mappedBy = "patient")
+    @ToString.Exclude
     private List<Appointment> appointment;
 
     @JsonIgnore
     @OneToMany(mappedBy = "patient")
+    @ToString.Exclude
     private List<MedicalReport> medicalReport;
 
 }

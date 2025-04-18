@@ -2,8 +2,10 @@ package com.example.finalProject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "prescriptions")
 public class Prescription {
 
@@ -12,11 +14,10 @@ public class Prescription {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "medicalReportId")
+    @ManyToOne(cascade = CascadeType.ALL)
     private MedicalReport medicalReport;
 
-    private String medicineName;
+    private String name;
 
     private String dosage;
 

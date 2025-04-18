@@ -1,12 +1,8 @@
 package com.example.finalProject.dto;
 
-import com.example.finalProject.model.Appointment;
-import com.example.finalProject.model.Doctor;
-import com.example.finalProject.model.Patient;
-import com.example.finalProject.model.Prescription;
-import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -14,11 +10,11 @@ public class MedicalReportDTO {
 
     private Long id;
 
-    private Patient patient;
+    private String patientName;
 
-    private Doctor doctor;
+    private String doctorName;
 
-    private Appointment appointment;
+    private Long appointmentId;
 
     private String symptom;
 
@@ -26,6 +22,10 @@ public class MedicalReportDTO {
 
     private String notes;
 
-    private List<Prescription> prescriptions;
+    private List<PrescriptionDTO> prescriptions;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
 }
